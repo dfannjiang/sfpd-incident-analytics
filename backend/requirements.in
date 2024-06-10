@@ -1,0 +1,4 @@
+# requirements.in
+fastapi
+tortoise-orm
+uvicorn
