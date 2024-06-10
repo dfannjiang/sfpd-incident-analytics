@@ -1,4 +1,6 @@
 # requirements.in
+aerich
+asyncpg
 fastapi
 tortoise-orm
 uvicorn
