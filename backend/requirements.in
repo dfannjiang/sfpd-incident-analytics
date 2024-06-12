@@ -2,5 +2,7 @@
 aerich
 asyncpg
 fastapi
+pandas
+pyarrow
 tortoise-orm
 uvicorn
