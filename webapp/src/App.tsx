@@ -1,30 +1,17 @@
 import React, { useState } from "react";
 import "./App.css";
 import MapComponent from "./MapComponent";
-
-interface NeighborhoodProps {
-  nhood: string;
-}
+import NeighborhoodDetails from "./NeighborhoodDetails";
+import { RawNeighborhoodProps, NeighborhoodProps } from "./types";
 
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<NeighborhoodProps | null>(null);
 
-  const handleNeighborhoodClick = async (neighborhood: NeighborhoodProps) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/neighborhoods/${neighborhood.nhood}`
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const data = await response.json();
-      console.log(data);
-      setSelectedNeighborhood(neighborhood);
-    } catch (err) {
-      console.log("error: " + err);
-      setSelectedNeighborhood(null);
-    }
+  const handleNeighborhoodClick = (neighborhood: RawNeighborhoodProps) => {
+    setSelectedNeighborhood({
+      name: neighborhood.nhood,
+    });
   };
 
   return (
@@ -34,10 +21,7 @@ const App: React.FC = () => {
       </div>
       <div style={{ flex: 1, padding: "20px", overflow: "auto" }}>
         {selectedNeighborhood ? (
-          <div>
-            <h2>{selectedNeighborhood.nhood}</h2>
-            {/* Add more neighborhood details here */}
-          </div>
+          <NeighborhoodDetails name={selectedNeighborhood.name} />
         ) : (
           <div>
             <h2>Select a neighborhood</h2>
