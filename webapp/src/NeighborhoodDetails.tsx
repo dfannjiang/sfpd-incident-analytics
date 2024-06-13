@@ -3,7 +3,6 @@ import {
   BarChart,
   Bar,
   CartesianGrid,
-  Legend,
   LineChart,
   Line,
   ResponsiveContainer,
@@ -11,13 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import keysToCamelCase from "./keysToCamelCase";
-import { NeighborhoodProps } from "./types";
-
-interface IncidentCount {
-  name: string;
-  count: number;
-}
+import { NeighborhoodDataResp } from "./types";
 
 interface PieChartData {
   name: string;
@@ -29,84 +22,65 @@ interface LineChartData {
   value: number;
 }
 
-interface NeighborhoodDataResp {
-  categoryCounts: IncidentCount[];
-  countsByHour: number[];
-  medianPerDay: number;
-}
-
-const NeighborhoodDetails: React.FC<NeighborhoodProps> = ({ name }) => {
+const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
+  neighborhoodData
+) => {
   const [topIncidents, setTopIncidents] = useState<string[]>([]);
   const [barChartData, setBarChartData] = useState<PieChartData[]>([]);
   const [lineChartData, setLineChartData] = useState<LineChartData[]>([]);
   const [medianPerDay, setMedianPerDay] = useState<number | null>(null);
 
   useEffect(() => {
-    // Replace with your actual API endpoint
-    (async () => {
-      try {
-        const apiResp = await fetch(
-          `http://localhost:8000/neighborhoods/${name}`
-        ).then((response) => response.json());
-        console.log(apiResp);
-        const neighborhoodData = keysToCamelCase(
-          apiResp
-        ) as NeighborhoodDataResp;
-        console.log(neighborhoodData);
-        const sortedIncidentCounts = neighborhoodData.categoryCounts.sort(
-          (a, b) => {
-            return b.count - a.count;
-          }
-        );
-
-        let topIncidents = [];
-        for (let i = 0; i < Math.min(sortedIncidentCounts.length, 5); i++) {
-          topIncidents.push(sortedIncidentCounts[i].name);
-        }
-        setTopIncidents(topIncidents);
-
-        const totalIncidents = sortedIncidentCounts.reduce(
-          (partialSum, x) => partialSum + x.count,
-          0
-        );
-        let barChartData: PieChartData[] = [];
-        let otherCount = totalIncidents;
-        for (var incidentCount of sortedIncidentCounts) {
-          if ((totalIncidents - otherCount) / totalIncidents >= 0.8) {
-            break;
-          }
-          const percentCount = (incidentCount.count * 100) / totalIncidents;
-          barChartData.push({
-            name: incidentCount.name,
-            value: Math.round(percentCount * 100) / 100,
-          });
-          otherCount = otherCount - incidentCount.count;
-        }
-        setBarChartData(barChartData);
-
-        let lineChartData: LineChartData[] = [];
-        const totalCountsByHour = neighborhoodData.countsByHour.reduce(
-          (partialSum, x) => partialSum + x,
-          0
-        );
-        for (let i = 0; i < 24; i++) {
-          let count = 0;
-          if (i < neighborhoodData.countsByHour.length) {
-            count = neighborhoodData.countsByHour[i];
-          }
-          const percentCount = (count * 100) / totalCountsByHour;
-          lineChartData.push({
-            name: String(i),
-            value: Math.round(percentCount * 100) / 100,
-          });
-        }
-        setLineChartData(lineChartData);
-        setMedianPerDay(neighborhoodData.medianPerDay);
-      } catch (err) {
-        console.error("Error fetching neighborhood details:", err);
+    const sortedIncidentCounts = neighborhoodData.categoryCounts.sort(
+      (a, b) => {
+        return b.count - a.count;
       }
-    })();
-  }, [name]);
+    );
+
+    let topIncidents = [];
+    for (let i = 0; i < Math.min(sortedIncidentCounts.length, 5); i++) {
+      topIncidents.push(sortedIncidentCounts[i].name);
+    }
+    setTopIncidents(topIncidents);
+
+    const totalIncidents = sortedIncidentCounts.reduce(
+      (partialSum, x) => partialSum + x.count,
+      0
+    );
+    let barChartData: PieChartData[] = [];
+    let otherCount = totalIncidents;
+    for (var incidentCount of sortedIncidentCounts) {
+      if ((totalIncidents - otherCount) / totalIncidents >= 0.8) {
+        break;
+      }
+      const percentCount = (incidentCount.count * 100) / totalIncidents;
+      barChartData.push({
+        name: incidentCount.name,
+        value: Math.round(percentCount * 100) / 100,
+      });
+      otherCount = otherCount - incidentCount.count;
+    }
+    setBarChartData(barChartData);
+
+    let lineChartData: LineChartData[] = [];
+    const totalCountsByHour = neighborhoodData.countsByHour.reduce(
+      (partialSum, x) => partialSum + x,
+      0
+    );
+    for (let i = 0; i < 24; i++) {
+      let count = 0;
+      if (i < neighborhoodData.countsByHour.length) {
+        count = neighborhoodData.countsByHour[i];
+      }
+      const percentCount = (count * 100) / totalCountsByHour;
+      lineChartData.push({
+        name: String(i),
+        value: Math.round(percentCount * 100) / 100,
+      });
+    }
+    setLineChartData(lineChartData);
+    setMedianPerDay(neighborhoodData.medianPerDay);
+  }, [neighborhoodData]);
 
   if (topIncidents.length == 0) {
     return <p>Loading...</p>;
@@ -166,7 +140,6 @@ const NeighborhoodDetails: React.FC<NeighborhoodProps> = ({ name }) => {
 
   return (
     <div>
-      <h2>{name}</h2>
       <h3>Median incidents per day: {medianPerDay}</h3>
       <h3>Top 80% of incidents</h3>
       <ResponsiveContainer width="100%" height={400}>

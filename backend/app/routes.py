@@ -1,13 +1,16 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Path
 from .models import Neighborhood
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from urllib.parse import unquote
 
 router = APIRouter()
 
-@router.get('/neighborhoods/{name}')
-async def get_neighborhood(name: str):
+@router.get('/neighborhoods/{name:path}')
+async def get_neighborhood(name: str = Path(..., description="The name of the neighborhood, URL-encoded")):
+    name = unquote(name)
+    print(f'name={name}')
     df = pd.read_parquet('data/data.parquet')
     df = df[df.Analysis_Neighborhood == name]
     df['date'] = df.Incident_DT.dt.date
