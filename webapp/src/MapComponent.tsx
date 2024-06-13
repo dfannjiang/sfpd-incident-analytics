@@ -25,7 +25,6 @@ const MapComponent: React.FC<{
       const popupContent = `
         <div>
           <h3>${properties.nhood}</h3>
-          <!-- Add more content heexre based on properties -->
         </div>
       `;
       layer.bindPopup(popupContent);

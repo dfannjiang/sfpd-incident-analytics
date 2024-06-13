@@ -54,3 +54,15 @@ body,
   border: 1px solid #ccc;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+
+.details-container {
+  background-color: #333; /* Dark grey background */
+  color: #fff; /* White text color */
+  min-height: 100vh;
+  padding: 20px;
+  flex: 1;
+}
+
+.details-spinner {
+  color: #fff; /* White spinner */
+}

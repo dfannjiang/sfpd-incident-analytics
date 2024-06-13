@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./App.css";
 import MapComponent from "./MapComponent";
 import NeighborhoodDetails from "./NeighborhoodDetails";
 import keysToCamelCase from "./keysToCamelCase";
@@ -8,6 +7,9 @@ import {
   NeighborhoodProps,
   NeighborhoodDataResp,
 } from "./types";
+import { Spinner } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
@@ -48,7 +50,7 @@ const App: React.FC = () => {
       <div style={{ flex: 1 }}>
         <MapComponent onNeighborhoodClick={handleNeighborhoodClick} />
       </div>
-      <div style={{ flex: 1, padding: "20px", overflow: "auto" }}>
+      <div className="details-container">
         {selectedNeighborhood && selectNeighborhoodErr ? (
           <div>
             <h2>{selectedNeighborhood.name}</h2>
@@ -65,7 +67,9 @@ const App: React.FC = () => {
         ) : selectedNeighborhood ? (
           <div>
             <h2>{selectedNeighborhood.name}</h2>
-            <p>Loading...</p>
+            <div className="details-spinner">
+              <Spinner animation="border" />
+            </div>
           </div>
         ) : (
           <div>
