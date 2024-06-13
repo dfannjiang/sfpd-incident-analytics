@@ -35,3 +35,14 @@ async def get_neighborhood(name: str = Path(..., description="The name of the ne
 
         }
     raise HTTPException(status_code=404, detail="Neighborhood not found")
+
+@router.get('/incident-points')
+async def get_incident_points():
+    df = pd.read_parquet('data/data.parquet')
+    start_date = pd.to_datetime('now') - pd.DateOffset(years=2)
+    df = df[df.Incident_DT >= start_date]
+    df = df[df.Latitude.notna() & df.Longitude.notna()]
+    points = df[['Latitude', 'Longitude']].values.tolist()
+    return {
+        "points": points
+    }

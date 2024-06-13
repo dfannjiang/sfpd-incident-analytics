@@ -1,8 +1,69 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet.markercluster";
+import "leaflet.heat";
 import L, { GeoJSONOptions } from "leaflet";
 import { RawNeighborhoodProps } from "./types";
+
+interface IncidentPointsResp {
+  points: [number, number][];
+}
+
+const HeatmapLayer: React.FC<{
+  data: [number, number][];
+  isVisible: boolean;
+}> = ({ data, isVisible }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    let heatLayer: any;
+    if (isVisible && data.length > 0) {
+      heatLayer = (L as any).heatLayer(data, { radius: 8 }).addTo(map);
+    }
+
+    return () => {
+      if (heatLayer) {
+        map.removeLayer(heatLayer);
+      }
+    };
+  }, [data, isVisible, map]);
+
+  return null;
+};
+
+const DensityMapToggle: React.FC<{
+  onDensityMapToggleClick: () => void;
+  isVisible: boolean;
+}> = ({ onDensityMapToggleClick, isVisible }) => {
+  const map = useMap();
+  useEffect(() => {
+    const button = L.DomUtil.create(
+      "button",
+      "leaflet-bar leaflet-control leaflet-control-custom"
+    );
+    button.innerHTML = isVisible
+      ? "Hide density of incidents"
+      : "Show density of incidents";
+    button.onclick = onDensityMapToggleClick;
+
+    const customControl = L.control({ position: "topright" });
+
+    customControl.onAdd = function () {
+      return button;
+    };
+
+    customControl.addTo(map);
+
+    return () => {
+      map.removeControl(customControl);
+    };
+  }, [map, onDensityMapToggleClick, isVisible]);
+
+  return null;
+};
 
 const MapComponent: React.FC<{
   onNeighborhoodClick: (neighborhood: RawNeighborhoodProps) => void;
@@ -10,6 +71,8 @@ const MapComponent: React.FC<{
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
     null
   );
+  const [heatmapData, setHeatmapData] = useState<[number, number][]>([]);
+  const [showDensityMap, setShowDensityMap] = useState<boolean>(false);
 
   useEffect(() => {
     fetch("/Analysis_Neighborhoods_20240610.geojson")
@@ -18,9 +81,17 @@ const MapComponent: React.FC<{
       .catch((err) => console.error("Error loading GeoJSON:", err));
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const apiResp = (await fetch(
+        "http://localhost:8000/incident-points"
+      ).then((response) => response.json())) as IncidentPointsResp;
+      setHeatmapData(apiResp.points);
+    })();
+  }, []);
+
   const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
     const properties = feature.properties as RawNeighborhoodProps;
-    console.log(properties);
     if (properties && properties.nhood) {
       const popupContent = `
         <div>
@@ -48,6 +119,10 @@ const MapComponent: React.FC<{
     onEachFeature,
   };
 
+  const toggleDensityMapVisibility = () => {
+    setShowDensityMap(!showDensityMap);
+  };
+
   return (
     <MapContainer
       center={[37.7749, -122.4194]}
@@ -59,6 +134,13 @@ const MapComponent: React.FC<{
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {geojson && <GeoJSON data={geojson} {...geoJsonStyle} />}
+      {heatmapData.length > 0 && (
+        <HeatmapLayer data={heatmapData} isVisible={showDensityMap} />
+      )}
+      <DensityMapToggle
+        onDensityMapToggleClick={toggleDensityMapVisibility}
+        isVisible={showDensityMap}
+      />
     </MapContainer>
   );
 };
