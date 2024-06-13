@@ -47,7 +47,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
-      <div style={{ flex: 1 }}>
+      <div className="incident-map-container">
         <MapComponent onNeighborhoodClick={handleNeighborhoodClick} />
       </div>
       <div className="details-container">
@@ -60,7 +60,7 @@ const App: React.FC = () => {
             </p>
           </div>
         ) : selectedNeighborhood && neighborhoodData ? (
-          <div>
+          <div className="neighborhood-detail-container">
             <h2>{selectedNeighborhood.name} District</h2>
             <NeighborhoodDetails {...neighborhoodData} />
           </div>
