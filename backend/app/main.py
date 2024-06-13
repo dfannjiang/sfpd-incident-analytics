@@ -9,7 +9,7 @@ app = FastAPI()
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Adjust this if your frontend is served from a different address
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -17,12 +17,12 @@ app.add_middleware(
 
 app.include_router(router)
 
-# register_tortoise(
-#     app,
-#     config=TORTOISE_ORM,
-#     generate_schemas=True,
-#     add_exception_handlers=True,
-# )
+register_tortoise(
+    app,
+    config=TORTOISE_ORM,
+    generate_schemas=True,
+    add_exception_handlers=True,
+)
 
 @app.on_event("startup")
 async def startup_event():

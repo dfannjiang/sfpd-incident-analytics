@@ -1,6 +1,6 @@
 TORTOISE_ORM = {
     "connections": {
-        "default": "postgres://user:password@localhost/mydatabase"
+        "default": "postgres://domfj:domfj*06*@localhost:5432/sf_analytics"
     },
     "apps": {
         "models": {

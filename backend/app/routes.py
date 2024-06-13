@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Path
-from .models import Neighborhood
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
