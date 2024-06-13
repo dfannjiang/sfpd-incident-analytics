@@ -61,6 +61,7 @@ body,
   min-height: 100vh;
   padding: 20px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .details-spinner {
@@ -81,4 +82,8 @@ body,
   text-align: center;
   justify-content: space-around;
   font-size: 15px;
+}
+
+.incident-map-container {
+  flex: 1;
 }

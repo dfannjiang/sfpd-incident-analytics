@@ -140,8 +140,9 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
 
   return (
     <div>
-      <h3>Median incidents per day: {medianPerDay}</h3>
-      <h3>Top 80% of incidents</h3>
+      <h4>Median incidents per day: </h4>
+      <p>{medianPerDay}</p>
+      <h4>Top 80% of incidents</h4>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           layout="vertical"
@@ -174,7 +175,7 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
         </BarChart>
       </ResponsiveContainer>
 
-      <h3>Incidents by hour of day</h3>
+      <h4>Incidents by hour of day</h4>
       <LineChart
         width={600}
         height={300}

@@ -53,7 +53,7 @@ const App: React.FC = () => {
       <div className="details-container">
         {selectedNeighborhood && selectNeighborhoodErr ? (
           <div>
-            <h2>{selectedNeighborhood.name}</h2>
+            <h2>{selectedNeighborhood.name} District</h2>
             <p>
               Data could not be fetched for {selectedNeighborhood.name}. Please
               try again later.
@@ -61,12 +61,12 @@ const App: React.FC = () => {
           </div>
         ) : selectedNeighborhood && neighborhoodData ? (
           <div>
-            <h2>{selectedNeighborhood.name}</h2>
+            <h2>{selectedNeighborhood.name} District</h2>
             <NeighborhoodDetails {...neighborhoodData} />
           </div>
         ) : selectedNeighborhood ? (
           <div>
-            <h2>{selectedNeighborhood.name}</h2>
+            <h2>{selectedNeighborhood.name} District</h2>
             <div className="details-spinner">
               <Spinner animation="border" />
             </div>
@@ -74,7 +74,10 @@ const App: React.FC = () => {
         ) : (
           <div>
             <h2>Select a neighborhood</h2>
-            <p>Click on a neighborhood on the map to see more information.</p>
+            <p>
+              Click on a neighborhood on the map to see information about police
+              incident reports in that area.
+            </p>
           </div>
         )}
       </div>
