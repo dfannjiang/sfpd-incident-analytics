@@ -6,7 +6,7 @@ import time
 import traceback
 
 from config import DB_URL, SOCRATA_APP_TOKEN
-from .models import IncidentReport
+from models import IncidentReport
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
@@ -51,10 +51,10 @@ async def delete_old_incidents():
   logging.info(f"Successfully deleted {deleted_num} incidents before {str(cutoff_date)}")
 
 @async_log_time
-async def get_existing_row_ids():
-  logging.info(f'Getting all existing row ids')
-  ids = await IncidentReport.all().values_list('row_id', flat=True)
-  logging.info(f'Got {len(ids)} existing row ids')
+async def get_existing_ids():
+  logging.info(f'Getting all existing ids')
+  ids = await IncidentReport.all().values_list('id', flat=True)
+  logging.info(f'Got {len(ids)} existing ids')
   return set(ids)
 
 @async_log_time
@@ -63,7 +63,7 @@ async def data_update():
   today = datetime.today()
   cutoff_date = today - relativedelta(years=1)
   cutoff_date_str = cutoff_date.strftime(datetime_format)
-  existing_row_ids = await get_existing_row_ids()
+  existing_ids = await get_existing_ids()
 
   insert_batch_size = 10000
   new_incidents = [] 
@@ -75,15 +75,15 @@ async def data_update():
         where=f"incident_datetime >= '{cutoff_date_str}'",
         limit=10000):
       
-      row_id = raw_incident.get('row_id')
-      if not row_id:
+      id = raw_incident.get('row_id')
+      if not id:
         num_skipped += 1
         continue
 
-      if row_id in existing_row_ids:
+      if id in existing_ids:
         num_skipped += 1
         continue
-      existing_row_ids.add(row_id)
+      existing_ids.add(id)
 
       analysis_neighborhood = raw_incident.get('analysis_neighborhood')
       if not analysis_neighborhood:
@@ -106,7 +106,7 @@ async def data_update():
 
 
         new_incidents.append((
-          row_id,
+          id,
           incident_dt,
           incident_dt.date(),
           int(raw_incident.get('incident_year')),
