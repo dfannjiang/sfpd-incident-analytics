@@ -5,11 +5,12 @@ import logging
 import time
 import traceback
 
-from app.models import IncidentReport
+from models import IncidentReport
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
 from tortoise import Tortoise
+from utils import compute_user_friendly_category
 
 
 logging.basicConfig(level=logging.INFO)
@@ -101,6 +102,10 @@ async def data_update():
         continue
       
       try:
+        incident_category = raw_incident.get('incident_category') or "",
+        incident_description = raw_incident.get('incident_description') or ""
+
+
         new_incidents.append((
           row_id,
           incident_dt,
@@ -115,16 +120,17 @@ async def data_update():
           raw_incident.get('report_type_description') or "",
           raw_incident.get('filed_online') or False,
           raw_incident.get('incident_code') or "",
-          raw_incident.get('incident_category') or "",
+          incident_category,
           raw_incident.get('incident_subcategory') or "",
-          raw_incident.get('incident_description') or "",
+          incident_description,
           raw_incident.get('resolution') or "",
           raw_incident.get('intersection') or "",
           raw_incident.get('cnn') or "",
           raw_incident.get('police_district') or "",
           analysis_neighborhood,
           float(raw_incident.get('latitude')),
-          float(raw_incident.get('longitude'))
+          float(raw_incident.get('longitude')),
+          compute_user_friendly_category(incident_category, incident_description)
         ))
       except Exception as e:
         logging.error(f'Skipping failure to read raw incident from socrata: {str(e)}. Traceback: {traceback.format_exc()}')
@@ -160,10 +166,11 @@ async def data_update():
 async def main():
     await Tortoise.init(
         db_url=DB_URL,
-        modules={'models': ['app.models', 'aerich.models']}
+        modules={'models': ['models', 'aerich.models']}
     )
     await Tortoise.generate_schemas()
     await data_update() 
+    await Tortoise.close_connections()
 
 if __name__ == '__main__':
   asyncio.run(main())

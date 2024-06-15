@@ -13,7 +13,7 @@ class DayOfWeek(Enum):
 
 
 class IncidentReport(Model):
-    row_id = fields.CharField(pk=True, max_length=80)
+    id = fields.CharField(pk=True, max_length=80)
     incident_datetime = fields.DatetimeField()
     incident_date = fields.DateField()
     incident_year = fields.IntField()
@@ -36,3 +36,4 @@ class IncidentReport(Model):
     analysis_neighborhood = fields.CharField(max_length=80)
     latitude = fields.DecimalField(9, 6, null=True)
     longitude = fields.DecimalField(9, 6, null=True)
+    user_friendly_category = fields.CharField(max_length=80)

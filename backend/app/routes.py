@@ -1,9 +1,7 @@
 import pandas as pd
 
 from .models import IncidentReport
-from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Path
-from tortoise.contrib.pydantic import pydantic_queryset_creator
 from urllib.parse import unquote
 
 router = APIRouter()
@@ -14,7 +12,7 @@ async def get_neighborhood(name: str = Path(..., description="The name of the ne
 
     data = await IncidentReport.filter(analysis_neighborhood=name).values()
     df = pd.DataFrame(data)
-    category_counts = df.incident_category.value_counts().to_dict()
+    category_counts = df.user_friendly_category.value_counts().to_dict()
 
     df['hour_of_day'] = df.incident_datetime.dt.hour
     counts_by_hour = df.groupby('hour_of_day').size()
