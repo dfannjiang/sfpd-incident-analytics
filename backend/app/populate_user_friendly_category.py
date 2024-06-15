@@ -2,15 +2,16 @@ import asyncio
 import logging
 import time
 
+from config import DB_URL
 from tortoise import Tortoise
-from models import IncidentReport
+from .models import IncidentReport
 from utils import compute_user_friendly_category
 
 logging.basicConfig(level=logging.INFO)
 
 async def populate_user_friendly_category():
     await Tortoise.init(
-        db_url="postgres://domfj:domfj*06*@localhost:5432/sf_analytics",
+        db_url=DB_URL,
         modules={'models': ['models', 'aerich.models']}
     )
     await Tortoise.generate_schemas()

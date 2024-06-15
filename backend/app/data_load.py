@@ -5,7 +5,8 @@ import logging
 import time
 import traceback
 
-from models import IncidentReport
+from config import DB_URL, SOCRATA_APP_TOKEN
+from .models import IncidentReport
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
@@ -14,10 +15,8 @@ from utils import compute_user_friendly_category
 
 
 logging.basicConfig(level=logging.INFO)
-APP_TOKEN = "H942SbOtZ5xKAvw4O1QHwZRJt"
 SOCRATA_URL = "data.sfgov.org"
 INCIDENTS_DATASET_ID = "wg3w-h783"
-DB_URL = "postgres://domfj:domfj*06*@localhost:5432/sf_analytics"
 
 def async_log_time(func):
     @functools.wraps(func)
@@ -71,7 +70,7 @@ async def data_update():
   num_skipped = 0
   db_tasks = []
   num_batches = 0
-  with Socrata(SOCRATA_URL, APP_TOKEN, timeout=20) as socrata_client:
+  with Socrata(SOCRATA_URL, SOCRATA_APP_TOKEN, timeout=20) as socrata_client:
     for raw_incident in socrata_client.get_all(INCIDENTS_DATASET_ID, 
         where=f"incident_datetime >= '{cutoff_date_str}'",
         limit=10000):

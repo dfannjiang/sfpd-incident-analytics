@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from .routes import router
-from config import TORTOISE_ORM
+from .config import TORTOISE_ORM
 
 app = FastAPI()
 
