@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Path
 import pandas as pd
-import numpy as np
+
+from .models import IncidentReport
 from datetime import datetime, timedelta
+from fastapi import APIRouter, HTTPException, Path
+from tortoise.contrib.pydantic import pydantic_queryset_creator
 from urllib.parse import unquote
 
 router = APIRouter()
@@ -9,12 +11,12 @@ router = APIRouter()
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(name: str = Path(..., description="The name of the neighborhood, URL-encoded")):
     name = unquote(name)
-    print(f'name={name}')
-    df = pd.read_parquet('data/data.parquet')
-    df = df[df.Analysis_Neighborhood == name]
-    df['date'] = df.Incident_DT.dt.date
-    category_counts = df.Custom_Category.value_counts().to_dict()
 
+    data = await IncidentReport.filter(analysis_neighborhood=name).values()
+    df = pd.DataFrame(data)
+    category_counts = df.incident_category.value_counts().to_dict()
+
+    df['hour_of_day'] = df.incident_datetime.dt.hour
     counts_by_hour = df.groupby('hour_of_day').size()
     counts_by_hour_resp = []
     for i in range(24):
@@ -30,18 +32,17 @@ async def get_neighborhood(name: str = Path(..., description="The name of the ne
                 neighborhood_name, count in category_counts.items()
             ],
             "counts_by_hour": counts_by_hour_resp,
-            "median_per_day": int(df.groupby('date').size().median())
+            "median_per_day": int(df.groupby('incident_date').size().median())
 
         }
     raise HTTPException(status_code=404, detail="Neighborhood not found")
 
 @router.get('/incident-points')
 async def get_incident_points():
-    df = pd.read_parquet('data/data.parquet')
-    start_date = pd.to_datetime('now') - pd.DateOffset(years=2)
-    df = df[df.Incident_DT >= start_date]
-    df = df[df.Latitude.notna() & df.Longitude.notna()]
-    points = df[['Latitude', 'Longitude']].values.tolist()
+    data = await IncidentReport.all().values()
+    df = pd.DataFrame(data)
+    df = df[df.latitude.notna() & df.longitude.notna()]
+    points = df[['latitude', 'longitude']].values.tolist()
     return {
         "points": points
     }

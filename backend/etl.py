@@ -46,7 +46,7 @@ async def insert_into_db(values, batch_num):
 async def delete_old_incidents():
   today = datetime.today()
   cutoff_date = today - relativedelta(years=1)
-  logging.info(f"Attempting to delete all incidents before {str(cutoff_date)}")
+  logging.info(f"Attempting to delete incidents before {str(cutoff_date)}")
   deleted_num = await IncidentReport.filter(incident_datetime__lt=cutoff_date).delete()
   logging.info(f"Successfully deleted {deleted_num} incidents before {str(cutoff_date)}")
 
@@ -70,15 +70,13 @@ async def data_update():
   num_skipped = 0
   db_tasks = []
   num_batches = 0
-  with Socrata(SOCRATA_URL, APP_TOKEN) as socrata_client:
+  with Socrata(SOCRATA_URL, APP_TOKEN, timeout=20) as socrata_client:
     for raw_incident in socrata_client.get_all(INCIDENTS_DATASET_ID, 
-        where=f"incident_datetime >= '{cutoff_date_str}' AND analysis_neighborhood IS NOT NULL",
-        order="row_id",
-        limit=1000):
+        where=f"incident_datetime >= '{cutoff_date_str}'",
+        limit=10000):
       
       row_id = raw_incident.get('row_id')
       if not row_id:
-        logging.warning(f'Found null row_id in {raw_incident}. Skipping.')
         num_skipped += 1
         continue
 
@@ -89,18 +87,24 @@ async def data_update():
 
       analysis_neighborhood = raw_incident.get('analysis_neighborhood')
       if not analysis_neighborhood:
-        logging.warning(f'Found no analysis neighborhood. Skipping. {raw_incident}')
+        num_skipped += 1
+        continue
+
+      incident_dt_str = raw_incident.get('incident_datetime')
+      if not incident_dt_str:
+        num_skipped += 1
+        continue
+
+      incident_dt = datetime.strptime(incident_dt_str, datetime_format)
+      if incident_dt < cutoff_date:
         num_skipped += 1
         continue
       
       try:
-        incident_datetime = datetime.strptime(
-          raw_incident.get('incident_datetime'),
-          datetime_format)
         new_incidents.append((
           row_id,
-          incident_datetime,
-          incident_datetime.date(),
+          incident_dt,
+          incident_dt.date(),
           int(raw_incident.get('incident_year')),
           raw_incident.get('incident_day_of_week') or "",
           datetime.strptime(raw_incident.get('report_datetime'), datetime_format),
@@ -144,6 +148,8 @@ async def data_update():
       num_success += succeeded
     if failed:
       num_failed += failed
+
+  await delete_old_incidents()
         
   logging.info(
     f'Inserted {num_success} incidents across {num_batches} batches\n'
