@@ -8,10 +8,14 @@ from .config import TORTOISE_ORM
 
 app = FastAPI()
 
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "")
+origins = allowed_origins.split(",") if allowed_origins else []
+origins.append("http://localhost:5173")
+
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
