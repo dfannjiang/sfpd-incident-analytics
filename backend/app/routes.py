@@ -6,6 +6,11 @@ from urllib.parse import unquote
 
 router = APIRouter()
 
+@router.get('/incident-categories')
+async def get_incident_categories():
+    categories = await IncidentReport.all().distinct().values_list('user_friendly_category', flat=True)
+    return { 'categories': categories }
+
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(name: str = Path(..., description="The name of the neighborhood, URL-encoded")):
     name = unquote(name)

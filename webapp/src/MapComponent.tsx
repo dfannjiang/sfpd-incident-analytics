@@ -8,6 +8,7 @@ import "leaflet.heat";
 import L, { GeoJSONOptions } from "leaflet";
 import { RawNeighborhoodProps } from "./types";
 import { apiUrl } from "./config.ts";
+import IncidentCategoryFilter from "./IncidentCategoryFilter";
 
 interface IncidentPointsResp {
   points: [number, number][];
@@ -135,24 +136,29 @@ const MapComponent: React.FC<{
   };
 
   return (
-    <MapContainer
-      center={[37.7749, -122.4194]}
-      zoom={12}
-      style={{ height: "100vh", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {geojson && <GeoJSON data={geojson} {...geoJsonStyle} />}
-      {heatmapData.length > 0 && (
-        <HeatmapLayer data={heatmapData} isVisible={showDensityMap} />
-      )}
-      <DensityMapToggle
-        onDensityMapToggleClick={toggleDensityMapVisibility}
-        isVisible={showDensityMap}
-      />
-    </MapContainer>
+    <div className="map-container">
+      <MapContainer
+        center={[37.7749, -122.4194]}
+        zoom={12}
+        style={{ height: "100vh", width: "100%" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {geojson && <GeoJSON data={geojson} {...geoJsonStyle} />}
+        {heatmapData.length > 0 && (
+          <HeatmapLayer data={heatmapData} isVisible={showDensityMap} />
+        )}
+        <DensityMapToggle
+          onDensityMapToggleClick={toggleDensityMapVisibility}
+          isVisible={showDensityMap}
+        />
+      </MapContainer>
+      <div className="filter-overlay">
+        <IncidentCategoryFilter />
+      </div>
+    </div>
   );
 };
 
