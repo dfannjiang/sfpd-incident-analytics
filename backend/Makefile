@@ -11,9 +11,7 @@ run: $(VENV)/bin/activate
 	@echo "Starting the FastAPI server..."
 	$(UVICORN) app.main:app --reload
 
-prod: $(VENV)/bin/activate
-	@echo "Starting the FastAPI server..."
-	$(UVICORN) app.main:app --host=0.0.0.0 --port=${PORT}
+prod: $(UVICORN) app.main:app --host=0.0.0.0 --port=${PORT}
 
 # Create virtual environment
 $(VENV)/bin/python: 
