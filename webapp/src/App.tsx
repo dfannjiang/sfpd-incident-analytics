@@ -10,6 +10,7 @@ import {
 import { Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import { apiUrl } from "./config.ts";
 
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
@@ -28,9 +29,7 @@ const App: React.FC = () => {
       try {
         setSelectNeighborhoodErr(false);
         const apiResp = await fetch(
-          `http://localhost:8000/neighborhoods/${encodeURIComponent(
-            neighborhood.nhood
-          )}`
+          `${apiUrl}/neighborhoods/${encodeURIComponent(neighborhood.nhood)}`
         ).then((response) => response.json());
         console.log(apiResp);
         const neighborhoodData = keysToCamelCase(

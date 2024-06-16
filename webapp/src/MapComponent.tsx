@@ -7,6 +7,7 @@ import "leaflet.markercluster";
 import "leaflet.heat";
 import L, { GeoJSONOptions } from "leaflet";
 import { RawNeighborhoodProps } from "./types";
+import { apiUrl } from "./config.ts";
 
 interface IncidentPointsResp {
   points: [number, number][];
@@ -93,9 +94,9 @@ const MapComponent: React.FC<{
 
   useEffect(() => {
     (async () => {
-      const apiResp = (await fetch(
-        "http://localhost:8000/incident-points"
-      ).then((response) => response.json())) as IncidentPointsResp;
+      const apiResp = (await fetch(`${apiUrl}/incident-points`).then(
+        (response) => response.json()
+      )) as IncidentPointsResp;
       setHeatmapData(apiResp.points);
     })();
   }, []);
