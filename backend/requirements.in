@@ -3,7 +3,6 @@ aerich
 asyncpg
 fastapi
 pandas
-pyarrow
 sodapy
 tortoise-orm
 uvicorn

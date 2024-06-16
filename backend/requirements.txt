@@ -68,14 +68,10 @@ markupsafe==2.1.5
 mdurl==0.1.2
     # via markdown-it-py
 numpy==1.26.4
-    # via
-    #   pandas
-    #   pyarrow
+    # via pandas
 orjson==3.10.4
     # via fastapi
 pandas==2.2.2
-    # via -r requirements.in
-pyarrow==16.1.0
     # via -r requirements.in
 pydantic==2.7.3
     # via
