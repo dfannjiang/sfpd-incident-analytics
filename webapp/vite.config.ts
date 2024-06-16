@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
     },
     preview: {
       port: 5000,
+      strictPort: true,
     },
   };
 });
