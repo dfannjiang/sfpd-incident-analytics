@@ -37,10 +37,14 @@ async def get_neighborhood(name: str = Path(..., description="The name of the ne
 
 @router.get('/incident-points')
 async def get_incident_points():
-    data = await IncidentReport.all().values()
-    df = pd.DataFrame(data)
-    df = df[df.latitude.notna() & df.longitude.notna()]
-    points = df[['latitude', 'longitude']].values.tolist()
+    data = await IncidentReport.all().values('latitude', 'longitude')
+    points = []
+    for report in data:
+        lat = report.get('latitude')
+        lon = report.get('longitude')
+        if not lat or not lon:
+            continue
+        points.append((lat, lon))
     return {
         "points": points
     }
