@@ -39,7 +39,7 @@ async def insert_into_db(values, batch_num):
     logging.info(f'Batch: {batch_num}: inserted {len(values)} rows')
     return len(values), 0
   except Exception as e:
-    logging.error(f'Failure to create data in DB: {str(e)}. Traceback: {traceback.format_exc()}')
+    logging.error(f'Failure to create data in DB: {str(e)}. Traceback: {traceback.format_exc()}. Example val: {values[0]}')
     return 0, len(values)
   
 @async_log_time
@@ -101,7 +101,7 @@ async def data_update():
         continue
       
       try:
-        incident_category = raw_incident.get('incident_category') or "",
+        incident_category = raw_incident.get('incident_category') or ""
         incident_description = raw_incident.get('incident_description') or ""
 
 
