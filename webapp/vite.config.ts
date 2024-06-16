@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
     },
     preview: {
-      port: 5000,
+      port: process.env.PORT || 5000,
       strictPort: true,
     },
   };
