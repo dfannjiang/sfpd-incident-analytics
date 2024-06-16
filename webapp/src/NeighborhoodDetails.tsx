@@ -112,7 +112,7 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
     );
   };
 
-  const TopIncidentsTooltip = ({ active, payload, label }: any) => {
+  const TopIncidentsTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="custom-tooltip">
@@ -123,7 +123,7 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
     return null;
   };
 
-  const IncidentsByHourTooltip = ({ active, payload, label }: any) => {
+  const IncidentsByHourTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const hour = parseInt(payload[0].payload.name);
       const hourLabel = `${hour % 12 == 0 ? "12" : hour % 12}${

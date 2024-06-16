@@ -49,7 +49,17 @@ const DensityMapToggle: React.FC<{
       : "Show density of incidents";
     button.onclick = onDensityMapToggleClick;
 
-    const customControl = L.control({ position: "topright" });
+    // Define the custom control class
+    const CustomControl = L.Control.extend({
+      onAdd: function () {
+        return button;
+      },
+      onRemove: function () {
+        // No-op
+      },
+    });
+
+    const customControl = new CustomControl({ position: "topright" });
 
     customControl.onAdd = function () {
       return button;
