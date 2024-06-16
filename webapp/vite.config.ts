@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [react()],
     build: {
-      outDir: "build",
+      outDir: "dist",
     },
     preview: {
       port: 5000,
