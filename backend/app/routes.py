@@ -9,8 +9,13 @@ router = APIRouter()
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(name: str = Path(..., description="The name of the neighborhood, URL-encoded")):
     name = unquote(name)
-
-    data = await IncidentReport.filter(analysis_neighborhood=name).values()
+    cols = [
+        'analysis_neighborhood',
+        'user_friendly_category',
+        'incident_datetime',
+        'incident_date'
+    ]
+    data = await IncidentReport.filter(analysis_neighborhood=name).values(*cols)
     df = pd.DataFrame(data)
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
