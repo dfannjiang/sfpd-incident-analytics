@@ -11,6 +11,7 @@ import { Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { apiUrl } from "./config.ts";
+import IntroModal from "./IntroModal";
 
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
@@ -66,6 +67,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
+      <IntroModal />
       <div className="incident-map-container">
         <MapComponent
           onNeighborhoodClick={handleNeighborhoodClick}
