@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { apiUrl } from "./config.ts";
 
-const IncidentCategoryFilter = () => {
+interface IncidentCategoryFilterProps {
+  onOptionSelect: (categories: string[]) => void;
+}
+
+const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
+  onOptionSelect,
+}) => {
   const [options, setOptions] = useState<string[]>([]);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -40,6 +46,10 @@ const IncidentCategoryFilter = () => {
     });
     setQuery("");
   };
+
+  useEffect(() => {
+    onOptionSelect(selectedOptions);
+  }, [selectedOptions]);
 
   const handleRemoveOption = (option: any) => {
     setSelectedOptions((prevSelectedOptions) =>

@@ -11,11 +11,11 @@ import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
 
 interface IncidentPointsResp {
-  points: [number, number][];
+  points: [number, number, string][];
 }
 
 const HeatmapLayer: React.FC<{
-  data: [number, number][];
+  data: [number, number, number][];
   isVisible: boolean;
 }> = ({ data, isVisible }) => {
   const map = useMap();
@@ -83,7 +83,13 @@ const MapComponent: React.FC<{
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
     null
   );
-  const [heatmapData, setHeatmapData] = useState<[number, number][]>([]);
+  const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [heatmapData, setHeatmapData] = useState<[number, number, number][]>(
+    []
+  );
+  const [fullHeatmapData, setFullHeatmapData] = useState<
+    [number, number, string][]
+  >([]);
   const [showDensityMap, setShowDensityMap] = useState<boolean>(false);
 
   useEffect(() => {
@@ -98,9 +104,20 @@ const MapComponent: React.FC<{
       const apiResp = (await fetch(`${apiUrl}/incident-points`).then(
         (response) => response.json()
       )) as IncidentPointsResp;
-      setHeatmapData(apiResp.points);
+      setFullHeatmapData(apiResp.points);
     })();
   }, []);
+
+  useEffect(() => {
+    const pts = fullHeatmapData.filter((pt) =>
+      categoryFilters.length > 0 ? categoryFilters.includes(pt[2]) : true
+    );
+    let intensity = 1;
+    if (pts.length < 1000) {
+      intensity = 10;
+    }
+    setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
+  }, [categoryFilters, fullHeatmapData]);
 
   const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
     const properties = feature.properties as RawNeighborhoodProps;
@@ -135,6 +152,10 @@ const MapComponent: React.FC<{
     setShowDensityMap(!showDensityMap);
   };
 
+  const handleIncidentCategorySelect = (categories: string[]) => {
+    setCategoryFilters(categories);
+  };
+
   return (
     <div className="map-container">
       <MapContainer
@@ -156,7 +177,7 @@ const MapComponent: React.FC<{
         />
       </MapContainer>
       <div className="filter-overlay">
-        <IncidentCategoryFilter />
+        <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
       </div>
     </div>
   );

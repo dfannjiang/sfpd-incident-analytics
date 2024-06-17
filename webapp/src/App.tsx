@@ -15,6 +15,7 @@ import { apiUrl } from "./config.ts";
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<NeighborhoodProps | null>(null);
+  const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [neighborhoodData, setNeighborhoodData] =
     useState<NeighborhoodDataResp | null>(null);
   const [selectNeighborhoodErr, setSelectNeighborhoodErr] =
