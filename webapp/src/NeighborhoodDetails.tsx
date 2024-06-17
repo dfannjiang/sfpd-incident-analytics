@@ -181,7 +181,7 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
       </ResponsiveContainer>
 
       <h4>Incidents by hour of day</h4>
-      <ResponsiveContainer width="106%" height={400}>
+      <ResponsiveContainer width="106%" height={250}>
         <LineChart
           width={100}
           height={300}
