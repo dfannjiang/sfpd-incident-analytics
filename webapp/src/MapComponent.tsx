@@ -36,47 +36,6 @@ const HeatmapLayer: React.FC<{
   return null;
 };
 
-const DensityMapToggle: React.FC<{
-  onDensityMapToggleClick: () => void;
-  isVisible: boolean;
-}> = ({ onDensityMapToggleClick, isVisible }) => {
-  const map = useMap();
-  useEffect(() => {
-    const button = L.DomUtil.create(
-      "button",
-      "leaflet-bar leaflet-control leaflet-control-custom"
-    );
-    button.innerHTML = isVisible
-      ? "Hide density of incidents"
-      : "Show density of incidents";
-    button.onclick = onDensityMapToggleClick;
-
-    // Define the custom control class
-    const CustomControl = L.Control.extend({
-      onAdd: function () {
-        return button;
-      },
-      onRemove: function () {
-        // No-op
-      },
-    });
-
-    const customControl = new CustomControl({ position: "topright" });
-
-    customControl.onAdd = function () {
-      return button;
-    };
-
-    customControl.addTo(map);
-
-    return () => {
-      map.removeControl(customControl);
-    };
-  }, [map, onDensityMapToggleClick, isVisible]);
-
-  return null;
-};
-
 const MapComponent: React.FC<{
   onNeighborhoodClick: (neighborhood: RawNeighborhoodProps) => void;
 }> = ({ onNeighborhoodClick }) => {
@@ -171,10 +130,6 @@ const MapComponent: React.FC<{
         {heatmapData.length > 0 && (
           <HeatmapLayer data={heatmapData} isVisible={showDensityMap} />
         )}
-        <DensityMapToggle
-          onDensityMapToggleClick={toggleDensityMapVisibility}
-          isVisible={showDensityMap}
-        />
       </MapContainer>
       <div className="filter-overlay">
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
