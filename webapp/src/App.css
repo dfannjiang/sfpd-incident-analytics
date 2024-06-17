@@ -85,7 +85,7 @@ body,
 .map-summary {
   align-content: center;
   font-weight: bold;
-  margin: 5px;
+  margin: 6px;
 }
 
 .filter-overlay {
@@ -98,7 +98,7 @@ body,
   max-width: 600px;
   background-color: white;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -119,6 +119,7 @@ body,
   flex-wrap: wrap;
   align-items: center;
   gap: 5px;
+  margin: 5px;
 }
 
 .filter-overlay .input-container {
@@ -131,9 +132,9 @@ body,
   display: flex;
   align-items: center;
   background-color: #e0e0e0;
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 5px;
-  margin: 2px;
+  margin: 1px;
   font-size: 10px;
   min-width: 60px; /* Set a minimum width */
 }
