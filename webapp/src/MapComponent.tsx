@@ -128,16 +128,14 @@ const MapComponent: React.FC<{
         {geojson && <GeoJSON data={geojson} {...geoJsonStyle} />}
         {heatmapData.length > 0 && <HeatmapLayer data={heatmapData} />}
       </MapContainer>
-      <div className="summary-overlay">
+      <div className="filter-overlay">
         <div className="map-summary">
           {apiLoading ? (
             <div className="spinner-border" role="status" />
           ) : (
-            <div> Showing {heatmapData.length} incidents </div>
+            <div> Showing {heatmapData.length.toLocaleString()} incidents </div>
           )}
         </div>
-      </div>
-      <div className="filter-overlay">
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
       </div>
     </div>

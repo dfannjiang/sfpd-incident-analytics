@@ -85,17 +85,7 @@ body,
 .map-summary {
   align-content: center;
   font-weight: bold;
-}
-
-.summary-overlay {
-  position: absolute;
-  top: 75px;
-  right: 67%;
-  padding: 10px;
-  transform: translateX(-50%);
-  z-index: 1000; /* Ensure the filter bar is on top of the map */
-  width: 30%;
-  max-width: 200px;
+  margin: 5px;
 }
 
 .filter-overlay {
