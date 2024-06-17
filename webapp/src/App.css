@@ -78,9 +78,28 @@ body,
   width: 100%;
 }
 
+.map-summary-spinner {
+  size: 10px;
+}
+
+.map-summary {
+  align-content: center;
+  font-weight: bold;
+}
+
+.summary-overlay {
+  position: absolute;
+  top: 10px;
+  left: 18%;
+  transform: translateX(-50%);
+  z-index: 1000; /* Ensure the filter bar is on top of the map */
+  width: 30%;
+  max-width: 200px;
+}
+
 .filter-overlay {
   position: absolute;
-  top: 62px;
+  top: 10px;
   left: 84%;
   transform: translateX(-50%);
   z-index: 1000; /* Ensure the filter bar is on top of the map */

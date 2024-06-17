@@ -16,13 +16,12 @@ interface IncidentPointsResp {
 
 const HeatmapLayer: React.FC<{
   data: [number, number, number][];
-  isVisible: boolean;
-}> = ({ data, isVisible }) => {
+}> = ({ data }) => {
   const map = useMap();
 
   useEffect(() => {
     let heatLayer: any;
-    if (isVisible && data.length > 0) {
+    if (data.length > 0) {
       heatLayer = (L as any).heatLayer(data, { radius: 8 }).addTo(map);
     }
 
@@ -31,7 +30,7 @@ const HeatmapLayer: React.FC<{
         map.removeLayer(heatLayer);
       }
     };
-  }, [data, isVisible, map]);
+  }, [data, map]);
 
   return null;
 };
@@ -50,6 +49,7 @@ const MapComponent: React.FC<{
     [number, number, string][]
   >([]);
   const [showDensityMap, setShowDensityMap] = useState<boolean>(false);
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetch("/Analysis_Neighborhoods_20240610.geojson")
@@ -60,9 +60,11 @@ const MapComponent: React.FC<{
 
   useEffect(() => {
     (async () => {
+      setApiLoading(true);
       const apiResp = (await fetch(`${apiUrl}/incident-points`).then(
         (response) => response.json()
       )) as IncidentPointsResp;
+      setApiLoading(false);
       setFullHeatmapData(apiResp.points);
     })();
   }, []);
@@ -127,10 +129,17 @@ const MapComponent: React.FC<{
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {geojson && <GeoJSON data={geojson} {...geoJsonStyle} />}
-        {heatmapData.length > 0 && (
-          <HeatmapLayer data={heatmapData} isVisible={showDensityMap} />
-        )}
+        {heatmapData.length > 0 && <HeatmapLayer data={heatmapData} />}
       </MapContainer>
+      <div className="summary-overlay">
+        <div className="map-summary">
+          {apiLoading ? (
+            <div className="spinner-border" role="status" />
+          ) : (
+            <div> Showing {heatmapData.length} incidents </div>
+          )}
+        </div>
+      </div>
       <div className="filter-overlay">
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
       </div>
