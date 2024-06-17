@@ -114,7 +114,7 @@ const MapComponent: React.FC<{
     );
     let intensity = 1;
     if (pts.length < 1000) {
-      intensity = 10;
+      intensity = 5;
     }
     setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
   }, [categoryFilters, fullHeatmapData]);

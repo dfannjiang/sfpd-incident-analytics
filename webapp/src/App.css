@@ -189,3 +189,12 @@ body,
 .scroll-container li.selected {
   background-color: #d3d3d3; /* Selected option background color */
 }
+
+.toggle-filter-button {
+  margin: 1px;
+  padding: 2px 4px;
+  font-size: 10px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}

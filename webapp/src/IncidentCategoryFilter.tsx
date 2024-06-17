@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiUrl } from "./config.ts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 interface IncidentCategoryFilterProps {
   onOptionSelect: (categories: string[]) => void;
@@ -12,6 +14,7 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
+  const [showFilterOptions, setShowFilterOptions] = useState<boolean>(true);
 
   useEffect(() => {
     // Fetch options from API
@@ -45,6 +48,7 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
       }
     });
     setQuery("");
+    setFilteredOptions(options);
   };
 
   useEffect(() => {
@@ -67,6 +71,10 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
         prevSelectedOptions.slice(0, -1)
       );
     }
+  };
+
+  const toggleFilterOptions = () => {
+    setShowFilterOptions((prevShowFilterOptions) => !prevShowFilterOptions);
   };
 
   return (
@@ -93,20 +101,27 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
           placeholder="Filter on category..."
           className="search-bar"
         />
+        <button onClick={toggleFilterOptions} className="toggle-filter-button">
+          <FontAwesomeIcon
+            icon={showFilterOptions ? faChevronDown : faChevronUp}
+          />
+        </button>
       </div>
-      <div className="scroll-container">
-        <ul>
-          {filteredOptions.map((option) => (
-            <li
-              key={option}
-              onClick={() => handleOptionClick(option)}
-              className={selectedOptions.includes(option) ? "selected" : ""}
-            >
-              {option}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {showFilterOptions && (
+        <div className="scroll-container">
+          <ul>
+            {filteredOptions.map((option) => (
+              <li
+                key={option}
+                onClick={() => handleOptionClick(option)}
+                className={selectedOptions.includes(option) ? "selected" : ""}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
