@@ -9,6 +9,11 @@ import L, { GeoJSONOptions } from "leaflet";
 import { RawNeighborhoodProps } from "./types";
 import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
+import keysToCamelCase from "./keysToCamelCase";
+
+interface LastUpdatedResp {
+  lastUpdated: string;
+}
 
 interface IncidentPointsResp {
   points: [number, number, string][];
@@ -50,6 +55,7 @@ const MapComponent: React.FC<{
     [number, number, string][]
   >([]);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
 
   useEffect(() => {
     fetch("/Analysis_Neighborhoods_20240610.geojson")
@@ -113,6 +119,17 @@ const MapComponent: React.FC<{
     onCategoryFilterSelect(categories);
   };
 
+  useEffect(() => {
+    (async () => {
+      const apiResp = await fetch(`${apiUrl}/data-last-updated`).then(
+        (response) => response.json()
+      );
+      console.log(apiResp);
+      const lastUpdated = keysToCamelCase(apiResp) as LastUpdatedResp;
+      setLastUpdated(lastUpdated.lastUpdated || "");
+    })();
+  }, []);
+
   return (
     <div className="map-container">
       <MapContainer
@@ -132,7 +149,18 @@ const MapComponent: React.FC<{
           {apiLoading ? (
             <div className="spinner-border" role="status" />
           ) : (
-            <div> Showing {heatmapData.length.toLocaleString()} incidents </div>
+            <div>
+              {" "}
+              Showing density of map of {heatmapData.length.toLocaleString()}{" "}
+              incidents{" "}
+            </div>
+          )}
+          {lastUpdated.length > 0 && (
+            <div>
+              <p className="last-updated-str">
+                Data last updated: {new Date(lastUpdated).toDateString()}
+              </p>
+            </div>
           )}
         </div>
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />

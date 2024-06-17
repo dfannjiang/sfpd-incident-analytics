@@ -6,7 +6,7 @@ import time
 import traceback
 
 from config import DB_URL, SOCRATA_APP_TOKEN
-from models import IncidentReport
+from models import DataLoadLog, IncidentReport
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
@@ -168,8 +168,16 @@ async def main():
         modules={'models': ['models', 'aerich.models']}
     )
     await Tortoise.generate_schemas()
-    await data_update() 
-    await Tortoise.close_connections()
+    start = datetime.now()
+    try:
+      
+      await data_update()
+      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(), failed=False)
+    except Exception as e:
+      logging.error(f"Data load started at {str(start)} failed: {str(e)}")
+      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(), failed=True)
+    finally:
+      await Tortoise.close_connections()
 
 if __name__ == '__main__':
   asyncio.run(main())

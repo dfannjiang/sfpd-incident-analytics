@@ -37,3 +37,9 @@ class IncidentReport(Model):
     latitude = fields.DecimalField(9, 6, null=True)
     longitude = fields.DecimalField(9, 6, null=True)
     user_friendly_category = fields.CharField(max_length=80)
+
+class DataLoadLog(Model):
+    id = fields.IntField(pk=True)
+    start_dt = fields.DatetimeField()
+    end_dt = fields.DatetimeField()
+    failed = fields.BooleanField()

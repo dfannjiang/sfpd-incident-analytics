@@ -138,6 +138,11 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
     return null;
   };
 
+  // Depending on the value of the tick, you'll have a different label
+  const formatLineChartYAxis = (value: number) => {
+    return String(value) + "%";
+  };
+
   return (
     <div>
       <h4>Median incidents per day: </h4>
@@ -176,42 +181,38 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
       </ResponsiveContainer>
 
       <h4>Incidents by hour of day</h4>
-      <LineChart
-        width={600}
-        height={300}
-        data={lineChartData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 10,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="name"
-          label={{
-            value: "Hour of the day",
-            position: "insideBottom",
-            offset: -5,
+      <ResponsiveContainer width="106%" height={400}>
+        <LineChart
+          width={100}
+          height={300}
+          data={lineChartData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 0,
+            bottom: 10,
           }}
-          interval={0}
-        />
-        <YAxis
-          label={{
-            value: "%",
-            position: "insideMiddle",
-            offset: -5,
-          }}
-        />
-        <Tooltip content={<IncidentsByHourTooltip />} />
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
-        />
-      </LineChart>
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="name"
+            label={{
+              value: "Hour of the day",
+              position: "insideBottom",
+              offset: -5,
+            }}
+            interval={0}
+          />
+          <YAxis width={35} tickFormatter={formatLineChartYAxis} />
+          <Tooltip content={<IncidentsByHourTooltip />} />
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 };

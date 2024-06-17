@@ -1,11 +1,21 @@
 import pandas as pd
 
-from .models import IncidentReport
+from .models import DataLoadLog, IncidentReport
 from fastapi import APIRouter, HTTPException, Path, Query
+from tortoise.functions import Max
 from typing import List, Optional
 from urllib.parse import unquote
 
 router = APIRouter()
+
+@router.get('/data-last-updated')
+async def get_data_last_updated():
+    max_end_dt = await DataLoadLog.filter(failed=False).annotate(max_value=Max('end_dt')).values("max_value")
+    last_updated = max_end_dt[0]['max_value'] if max_end_dt else None
+    if last_updated:
+        return { 'last_updated': last_updated.strftime('%Y-%m-%dT%H:%M:%S.%f') }
+    else:
+        return { 'last_updated': None }
 
 @router.get('/incident-categories')
 async def get_incident_categories():

@@ -48,7 +48,6 @@ const App: React.FC = () => {
           url += `categories=${categoryFilters[i]}`;
         }
         const apiResp = await fetch(url).then((response) => response.json());
-        console.log(apiResp);
         const neighborhoodData = keysToCamelCase(
           apiResp
         ) as NeighborhoodDataResp;
