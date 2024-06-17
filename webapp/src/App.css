@@ -96,7 +96,8 @@ body,
   z-index: 1000; /* Ensure the filter bar is on top of the map */
   width: 30%;
   max-width: 600px;
-  background-color: white;
+  background-color: #333;
+  color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -108,7 +109,7 @@ body,
   margin: 0 auto;
   border-radius: 4px;
   height: 100%;
-  background-color: white;
+  background-color: #333;
   display: flex;
   flex-direction: column;
   margin: 5px auto;
@@ -131,7 +132,7 @@ body,
 .selected-option {
   display: flex;
   align-items: center;
-  background-color: #e0e0e0;
+  background-color: #e0e0e02f;
   border-radius: 8px;
   padding: 5px;
   margin: 1px;
@@ -152,10 +153,10 @@ body,
   font-size: 15px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: #ffffff;
-  color: black;
+  color: white;
   box-sizing: border-box;
   flex: 1;
+  background-color: #333;
 }
 
 .filter-overlay .scroll-container {
@@ -178,11 +179,11 @@ body,
 }
 
 .scroll-container li:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f07e;
 }
 
 .scroll-container li.selected {
-  background-color: #d3d3d3; /* Selected option background color */
+  background-color: #f0f0f07e; /* Selected option background color */
 }
 
 .toggle-filter-button {
@@ -190,6 +191,6 @@ body,
   padding: 2px 4px;
   font-size: 10px;
   cursor: pointer;
-  background-color: white;
-  color: black;
+  background-color: #333;
+  color: white;
 }
