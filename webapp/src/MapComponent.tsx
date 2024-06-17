@@ -49,7 +49,6 @@ const MapComponent: React.FC<{
   const [fullHeatmapData, setFullHeatmapData] = useState<
     [number, number, string][]
   >([]);
-  const [showDensityMap, setShowDensityMap] = useState<boolean>(false);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
 
   useEffect(() => {
