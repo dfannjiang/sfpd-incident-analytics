@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
 import NeighborhoodDetails from "./NeighborhoodDetails";
 import keysToCamelCase from "./keysToCamelCase";
@@ -26,12 +26,27 @@ const App: React.FC = () => {
       name: neighborhood.nhood,
     });
     setNeighborhoodData(null);
-    (async () => {
+  };
+
+  useEffect(() => {
+    if (!selectedNeighborhood) {
+      return;
+    }
+    (async (neighborhood: NeighborhoodProps, categoryFilters: string[]) => {
       try {
         setSelectNeighborhoodErr(false);
-        const apiResp = await fetch(
-          `${apiUrl}/neighborhoods/${encodeURIComponent(neighborhood.nhood)}`
-        ).then((response) => response.json());
+        let url = `${apiUrl}/neighborhoods/${encodeURIComponent(
+          neighborhood.name
+        )}`;
+        for (let i = 0; i < categoryFilters.length; i++) {
+          if (i > 0) {
+            url += "&";
+          } else {
+            url += "?";
+          }
+          url += `categories=${categoryFilters[i]}`;
+        }
+        const apiResp = await fetch(url).then((response) => response.json());
         console.log(apiResp);
         const neighborhoodData = keysToCamelCase(
           apiResp
@@ -42,13 +57,20 @@ const App: React.FC = () => {
         console.error("Error fetching neighborhood details:", err);
         setSelectNeighborhoodErr(true);
       }
-    })();
+    })(selectedNeighborhood, categoryFilters);
+  }, [selectedNeighborhood, categoryFilters]);
+
+  const handleIncidentCategorySelect = (categories: string[]) => {
+    setCategoryFilters(categories);
   };
 
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
       <div className="incident-map-container">
-        <MapComponent onNeighborhoodClick={handleNeighborhoodClick} />
+        <MapComponent
+          onNeighborhoodClick={handleNeighborhoodClick}
+          onCategoryFilterSelect={handleIncidentCategorySelect}
+        />
       </div>
       <div className="details-container">
         {selectedNeighborhood && selectNeighborhoodErr ? (

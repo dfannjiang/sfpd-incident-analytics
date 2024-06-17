@@ -37,7 +37,8 @@ const HeatmapLayer: React.FC<{
 
 const MapComponent: React.FC<{
   onNeighborhoodClick: (neighborhood: RawNeighborhoodProps) => void;
-}> = ({ onNeighborhoodClick }) => {
+  onCategoryFilterSelect: (categories: string[]) => void;
+}> = ({ onNeighborhoodClick, onCategoryFilterSelect }) => {
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
     null
   );
@@ -108,13 +109,9 @@ const MapComponent: React.FC<{
     },
     onEachFeature,
   };
-
-  const toggleDensityMapVisibility = () => {
-    setShowDensityMap(!showDensityMap);
-  };
-
   const handleIncidentCategorySelect = (categories: string[]) => {
     setCategoryFilters(categories);
+    onCategoryFilterSelect(categories);
   };
 
   return (

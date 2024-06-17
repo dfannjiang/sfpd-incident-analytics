@@ -1,7 +1,8 @@
 import pandas as pd
 
 from .models import IncidentReport
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Query
+from typing import List, Optional
 from urllib.parse import unquote
 
 router = APIRouter()
@@ -12,7 +13,10 @@ async def get_incident_categories():
     return { 'categories': categories }
 
 @router.get('/neighborhoods/{name:path}')
-async def get_neighborhood(name: str = Path(..., description="The name of the neighborhood, URL-encoded")):
+async def get_neighborhood(
+    name: str = Path(..., description="The name of the neighborhood, URL-encoded"),
+    categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by")
+):
     name = unquote(name)
     cols = [
         'analysis_neighborhood',
@@ -20,7 +24,12 @@ async def get_neighborhood(name: str = Path(..., description="The name of the ne
         'incident_datetime',
         'incident_date'
     ]
-    data = await IncidentReport.filter(analysis_neighborhood=name).values(*cols)
+    if categories:
+        data = await IncidentReport.filter(
+            analysis_neighborhood=name,
+            user_friendly_category__in=categories).values(*cols)
+    else:
+        data = await IncidentReport.filter(analysis_neighborhood=name).values(*cols)
     df = pd.DataFrame(data)
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
