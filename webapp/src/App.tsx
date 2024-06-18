@@ -26,7 +26,7 @@ const App: React.FC = () => {
   const [selectNeighborhoodErr, setSelectNeighborhoodErr] =
     useState<boolean>(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const handleIntroModalClose = () => {
     setShowIntroModal(false);
@@ -58,7 +58,14 @@ const App: React.FC = () => {
       );
       console.log(apiResp);
       const lastUpdated = keysToCamelCase(apiResp) as LastUpdatedResp;
-      setLastUpdated(lastUpdated.lastUpdated || "");
+
+      // If date is in the future according to local time zone,
+      // assume its in UTC.
+      if (new Date(lastUpdated.lastUpdated) > new Date()) {
+        setLastUpdated(new Date(lastUpdated.lastUpdated + "Z"));
+      } else {
+        setLastUpdated(new Date(lastUpdated.lastUpdated));
+      }
     })();
   }, []);
 
@@ -143,8 +150,7 @@ const App: React.FC = () => {
             Showing data for the past year
           </div>
           <div className="last-updated-str">
-            {lastUpdated.length > 0 &&
-              `Data last updated: ${new Date(lastUpdated).toDateString()}`}
+            {lastUpdated && `Data last updated: ${lastUpdated.toDateString()}`}
           </div>
           <button onClick={handleIntroModalOpen}>About</button>
         </div>
