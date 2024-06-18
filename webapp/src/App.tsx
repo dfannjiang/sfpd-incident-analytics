@@ -144,6 +144,7 @@ const App: React.FC = () => {
               ? `Data last updated: ${new Date(lastUpdated).toDateString()}`
               : "Data last updated:"}
           </div>
+          <div style={{ marginLeft: "2px" }}>Reporting period: past year</div>
           <button onClick={handleIntroModalOpen}>About</button>
         </div>
       </div>
