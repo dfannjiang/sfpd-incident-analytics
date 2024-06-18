@@ -61,18 +61,6 @@ body,
 
   .footer {
     position: fixed;
-    margin-top: auto;
-    bottom: 0;
-    height: 30px;
-    font-size: 12px;
-    width: 100%;
-    background-color: #232323;
-    align-items: right;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content: center;
-    padding: 6px;
   }
 }
 
@@ -247,7 +235,6 @@ body,
 .footer {
   margin-top: auto;
   bottom: 0;
-  height: 30px;
   font-size: 12px;
   width: 100%;
   background-color: #232323;
