@@ -114,7 +114,7 @@ const MapComponent: React.FC<{
   };
 
   return (
-    <div className="map-container">
+    <div className="map-container-wrapper">
       <MapContainer
         center={[37.7749, -122.4194]}
         zoom={12}
