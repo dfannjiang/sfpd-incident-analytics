@@ -139,12 +139,13 @@ const App: React.FC = () => {
           )}
         </div>
         <div className="footer">
-          <div className="last-updated-str">
-            {lastUpdated.length > 0
-              ? `Data last updated: ${new Date(lastUpdated).toDateString()}`
-              : "Data last updated:"}
+          <div style={{ marginLeft: "2px" }}>
+            Showing data for the past year
           </div>
-          <div style={{ marginLeft: "2px" }}>Reporting period: past year</div>
+          <div className="last-updated-str">
+            {lastUpdated.length > 0 &&
+              `Data last updated: ${new Date(lastUpdated).toDateString()}`}
+          </div>
           <button onClick={handleIntroModalOpen}>About</button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 const IntroModal: React.FC<{
   show: boolean;
@@ -7,10 +8,10 @@ const IntroModal: React.FC<{
 }> = ({ show, handleClose }) => {
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton className="bg-dark text-light">
         <Modal.Title>Welcome to the SF Police Incident Reports App</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="bg-dark text-light">
         <p>
           <strong>Important Notice:</strong>
         </p>
@@ -39,12 +40,8 @@ const IntroModal: React.FC<{
           .
         </p>
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="primary"
-          onClick={handleClose}
-          className="modal-button"
-        >
+      <Modal.Footer className="bg-dark">
+        <Button variant="dark" onClick={handleClose} className="modal-button">
           Close
         </Button>
       </Modal.Footer>

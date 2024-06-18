@@ -197,8 +197,6 @@ body,
 }
 
 .last-updated-str {
-  font-style: italic;
-  font-weight: normal;
   font-size: 12px;
   align-content: center;
 }
@@ -226,7 +224,6 @@ body,
 
 .footer button {
   background-color: #232323;
-  color: white;
   padding: 0;
   border: none;
   cursor: pointer;
@@ -234,10 +231,5 @@ body,
 
 .modal-button {
   background-color: #333;
-  border-color: #333;
-}
-
-.modal-button:hover {
-  background-color: #8d8d8d;
   border-color: #333;
 }
