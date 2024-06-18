@@ -13,6 +13,10 @@ import "./App.css";
 import { apiUrl } from "./config.ts";
 import IntroModal from "./IntroModal";
 
+interface LastUpdatedResp {
+  lastUpdated: string;
+}
+
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<NeighborhoodProps | null>(null);
@@ -21,6 +25,24 @@ const App: React.FC = () => {
     useState<NeighborhoodDataResp | null>(null);
   const [selectNeighborhoodErr, setSelectNeighborhoodErr] =
     useState<boolean>(false);
+  const [showIntroModal, setShowIntroModal] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
+
+  const handleIntroModalClose = () => {
+    setShowIntroModal(false);
+    localStorage.setItem("isFirstVisit", "false");
+  };
+
+  const handleIntroModalOpen = () => {
+    setShowIntroModal(true);
+  };
+
+  useEffect(() => {
+    const isFirstVisit = localStorage.getItem("isFirstVisit") !== "false";
+    if (isFirstVisit) {
+      setShowIntroModal(true);
+    }
+  }, []);
 
   const handleNeighborhoodClick = (neighborhood: RawNeighborhoodProps) => {
     setSelectedNeighborhood({
@@ -28,6 +50,17 @@ const App: React.FC = () => {
     });
     setNeighborhoodData(null);
   };
+
+  useEffect(() => {
+    (async () => {
+      const apiResp = await fetch(`${apiUrl}/data-last-updated`).then(
+        (response) => response.json()
+      );
+      console.log(apiResp);
+      const lastUpdated = keysToCamelCase(apiResp) as LastUpdatedResp;
+      setLastUpdated(lastUpdated.lastUpdated || "");
+    })();
+  }, []);
 
   useEffect(() => {
     if (!selectedNeighborhood) {
@@ -66,7 +99,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
-      <IntroModal />
+      <IntroModal show={showIntroModal} handleClose={handleIntroModalClose} />
       <div className="incident-map-container">
         <MapComponent
           onNeighborhoodClick={handleNeighborhoodClick}
@@ -74,35 +107,45 @@ const App: React.FC = () => {
         />
       </div>
       <div className="details-container">
-        {selectedNeighborhood && selectNeighborhoodErr ? (
-          <div>
-            <h2>{selectedNeighborhood.name} District</h2>
-            <p>
-              Data could not be fetched for {selectedNeighborhood.name}. Please
-              try again later.
-            </p>
-          </div>
-        ) : selectedNeighborhood && neighborhoodData ? (
-          <div className="neighborhood-detail-container">
-            <h2>{selectedNeighborhood.name} District</h2>
-            <NeighborhoodDetails {...neighborhoodData} />
-          </div>
-        ) : selectedNeighborhood ? (
-          <div>
-            <h2>{selectedNeighborhood.name} District</h2>
-            <div className="details-spinner">
-              <Spinner animation="border" />
+        <div className="details-content">
+          {selectedNeighborhood && selectNeighborhoodErr ? (
+            <div>
+              <h2>{selectedNeighborhood.name} District</h2>
+              <p>
+                Data could not be fetched for {selectedNeighborhood.name}.
+                Please try again later.
+              </p>
             </div>
-          </div>
-        ) : (
-          <div>
-            <h2>Select a neighborhood</h2>
-            <p>
-              Click on a neighborhood on the map to see information about police
-              incident reports in that area.
-            </p>
-          </div>
-        )}
+          ) : selectedNeighborhood && neighborhoodData ? (
+            <div className="neighborhood-detail-container">
+              <h2>{selectedNeighborhood.name} District</h2>
+              <NeighborhoodDetails {...neighborhoodData} />
+            </div>
+          ) : selectedNeighborhood ? (
+            <div>
+              <h2>{selectedNeighborhood.name} District</h2>
+              <div className="details-spinner">
+                <Spinner animation="border" />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2>Select a neighborhood</h2>
+              <p>
+                Click on a neighborhood on the map to see information about
+                police incident reports in that area.
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="footer">
+          {lastUpdated.length > 0 && (
+            <div className="last-updated-str">
+              Data last updated: {new Date(lastUpdated).toDateString()}
+            </div>
+          )}
+          <button onClick={handleIntroModalOpen}>About</button>
+        </div>
       </div>
     </div>
   );

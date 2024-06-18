@@ -1,21 +1,10 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const IntroModal = () => {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const isFirstVisit = localStorage.getItem("isFirstVisit") !== "false";
-    if (isFirstVisit) {
-      setShow(true);
-    }
-  }, []);
-
-  const handleClose = () => {
-    setShow(false);
-    localStorage.setItem("isFirstVisit", "false");
-  };
-
+const IntroModal: React.FC<{
+  show: boolean;
+  handleClose: () => void;
+}> = ({ show, handleClose }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -39,7 +28,7 @@ const IntroModal = () => {
           the past year only.
         </p>
         <p>
-          For more details and access the source code, please visit{" "}
+          For more details and access to the source code, please visit{" "}
           <a
             href="https://github.com/dfannjiang/sf-city-analytics"
             target="_blank"
@@ -51,7 +40,11 @@ const IntroModal = () => {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleClose}>
+        <Button
+          variant="primary"
+          onClick={handleClose}
+          className="modal-button"
+        >
           Close
         </Button>
       </Modal.Footer>
