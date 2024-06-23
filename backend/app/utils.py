@@ -52,4 +52,4 @@ def compute_user_friendly_category(
             return 'Code Violation'
         return 'Other'
 
-    return re.sub('[^A-Za-z0-9\s]+', '', incident_category.strip())
+    return re.sub('[^A-Za-z0-9\s-]+', '', incident_category.strip())
