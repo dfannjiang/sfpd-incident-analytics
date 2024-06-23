@@ -17,11 +17,11 @@ export interface NeighborhoodDataResp {
 }
 
 export interface IncidentFilterProps {
-  categoryFilters: string[];
-  timePeriodFilter: string;
+  categories: string[];
+  timePeriod: string;
 }
 
 export const defaultIncidentFilters = (): IncidentFilterProps => ({
-  categoryFilters: [],
-  timePeriodFilter: "1YEAR",
+  categories: [],
+  timePeriod: "1YEAR",
 });

@@ -77,8 +77,12 @@ const App: React.FC = () => {
     if (!selectedNeighborhood) {
       return;
     }
-    (async (neighborhood: NeighborhoodProps, categoryFilters: string[]) => {
+    (async (
+      neighborhood: NeighborhoodProps,
+      incidentFilters: IncidentFilterProps
+    ) => {
       try {
+        const categoryFilters = incidentFilters.categories;
         setSelectNeighborhoodErr(false);
         let url = `${apiUrl}/neighborhoods/${encodeURIComponent(
           neighborhood.name
@@ -91,6 +95,16 @@ const App: React.FC = () => {
           }
           url += `categories=${categoryFilters[i]}`;
         }
+
+        if (incidentFilters.timePeriod != "1YEAR") {
+          if (!url.includes("?")) {
+            url += "?";
+          } else {
+            url += "&";
+          }
+          url += `time_period=${incidentFilters.timePeriod}`;
+        }
+
         const apiResp = await fetch(url).then((response) => response.json());
         const neighborhoodData = keysToCamelCase(
           apiResp
@@ -101,7 +115,7 @@ const App: React.FC = () => {
         console.error("Error fetching neighborhood details:", err);
         setSelectNeighborhoodErr(true);
       }
-    })(selectedNeighborhood, incidentFilters.categoryFilters);
+    })(selectedNeighborhood, incidentFilters);
   }, [selectedNeighborhood, incidentFilters]);
 
   const handleIncidentFilterChange = (incidentFilters: IncidentFilterProps) => {

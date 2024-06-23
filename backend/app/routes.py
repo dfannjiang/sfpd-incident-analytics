@@ -1,5 +1,7 @@
 import pandas as pd
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from .models import DataLoadLog, IncidentReport
 from fastapi import APIRouter, HTTPException, Path, Query
 from tortoise.functions import Max
@@ -25,7 +27,8 @@ async def get_incident_categories():
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(
     name: str = Path(..., description="The name of the neighborhood, URL-encoded"),
-    categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by")
+    categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by"),
+    time_period: str = '1YEAR'
 ):
     if not name:
         raise HTTPException(status_code=404, detail="Neighborhood not found")
@@ -37,13 +40,33 @@ async def get_neighborhood(
         'incident_datetime',
         'incident_date'
     ]
+    filters = {
+        "analysis_neighborhood": name
+    }
     if categories:
-        data = await IncidentReport.filter(
-            analysis_neighborhood=name,
-            user_friendly_category__in=categories).values(*cols)
-    else:
-        data = await IncidentReport.filter(analysis_neighborhood=name).values(*cols)
+        filters['user_friendly_category__in'] = categories
+    if time_period != '1YEAR':
+        today = datetime.today()
+        if time_period == '3MONTH':
+            cutoff_date = today - relativedelta(months=3)
+        elif time_period == '1MONTH':
+            cutoff_date = today - relativedelta(months=1)
+        elif time_period == '1WEEK':
+            cutoff_date = today - relativedelta(weeks=1)
+        else:
+            raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
+        
+        filters['incident_datetime__gt'] = cutoff_date
+
+    data = await IncidentReport.filter(**filters).values(*cols)
     df = pd.DataFrame(data)
+    if df.shape[0] == 0:
+        return {
+            "category_counts": [],
+            "counts_by_hour": [],
+            "median_per_day": 0
+        }
+
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
     df['hour_of_day'] = df.incident_datetime.dt.hour
@@ -55,7 +78,7 @@ async def get_neighborhood(
         except KeyError:
             count = 0
         counts_by_hour_resp.append(count)
-    
+
     return {
         "category_counts": [
             { 'name': neighborhood_name, 'count': count } for

@@ -78,8 +78,8 @@ const MapComponent: React.FC<{
 
   useEffect(() => {
     const pts = fullHeatmapData.filter((pt) =>
-      incidentFilters.categoryFilters.length > 0
-        ? incidentFilters.categoryFilters.includes(pt[2])
+      incidentFilters.categories.length > 0
+        ? incidentFilters.categories.includes(pt[2])
         : true
     );
     let intensity = 1;
@@ -120,11 +120,18 @@ const MapComponent: React.FC<{
   const handleIncidentCategorySelect = (categories: string[]) => {
     setIncidentFilters({
       ...incidentFilters,
-      categoryFilters: categories,
+      categories: categories,
     });
     onIncidentFilterChange({
       ...incidentFilters,
-      categoryFilters: categories,
+      categories: categories,
+    });
+  };
+
+  const handleTimePeriodChange = (event: any) => {
+    onIncidentFilterChange({
+      ...incidentFilters,
+      timePeriod: event.target.value,
     });
   };
 
@@ -156,12 +163,13 @@ const MapComponent: React.FC<{
         </div>
         <div>
           <p className="time-period-title">Time Period</p>
-          <Form className="time-period-form">
-            <div key="inline-radio" className="mb-3">
+          <Form className="time-period-form" onChange={handleTimePeriodChange}>
+            <Form.Group key="inline-radio" className="mb-3">
               <Form.Check
                 inline
                 defaultChecked
                 label="1 Year"
+                value="1YEAR"
                 name="time-period"
                 type="radio"
                 className="custom-check"
@@ -169,6 +177,7 @@ const MapComponent: React.FC<{
               <Form.Check
                 inline
                 label="3 Months"
+                value="3MONTH"
                 name="time-period"
                 type="radio"
                 className="custom-check"
@@ -176,6 +185,7 @@ const MapComponent: React.FC<{
               <Form.Check
                 inline
                 label="1 Month"
+                value="1MONTH"
                 name="time-period"
                 type="radio"
                 className="custom-check"
@@ -183,11 +193,12 @@ const MapComponent: React.FC<{
               <Form.Check
                 inline
                 label="1 Week"
+                value="1WEEK"
                 name="time-period"
                 type="radio"
                 className="custom-check"
               />
-            </div>
+            </Form.Group>
           </Form>
         </div>
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />

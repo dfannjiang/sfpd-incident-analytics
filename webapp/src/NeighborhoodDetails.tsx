@@ -83,7 +83,7 @@ const NeighborhoodDetails: React.FC<NeighborhoodDataResp> = (
   }, [neighborhoodData]);
 
   if (topIncidents.length == 0) {
-    return <p>Loading...</p>;
+    return <p>No incidents found</p>;
   }
 
   const TopIncidentsYTicks = ({ x, y, payload }: any) => {
