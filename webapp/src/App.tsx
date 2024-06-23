@@ -6,6 +6,8 @@ import {
   RawNeighborhoodProps,
   NeighborhoodProps,
   NeighborhoodDataResp,
+  IncidentFilterProps,
+  defaultIncidentFilters,
 } from "./types";
 import { Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -20,7 +22,9 @@ interface LastUpdatedResp {
 const App: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<NeighborhoodProps | null>(null);
-  const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [incidentFilters, setIncidentFilters] = useState<IncidentFilterProps>(
+    defaultIncidentFilters()
+  );
   const [neighborhoodData, setNeighborhoodData] =
     useState<NeighborhoodDataResp | null>(null);
   const [selectNeighborhoodErr, setSelectNeighborhoodErr] =
@@ -97,11 +101,11 @@ const App: React.FC = () => {
         console.error("Error fetching neighborhood details:", err);
         setSelectNeighborhoodErr(true);
       }
-    })(selectedNeighborhood, categoryFilters);
-  }, [selectedNeighborhood, categoryFilters]);
+    })(selectedNeighborhood, incidentFilters.categoryFilters);
+  }, [selectedNeighborhood, incidentFilters]);
 
-  const handleIncidentCategorySelect = (categories: string[]) => {
-    setCategoryFilters(categories);
+  const handleIncidentFilterChange = (incidentFilters: IncidentFilterProps) => {
+    setIncidentFilters(incidentFilters);
   };
 
   return (
@@ -110,7 +114,7 @@ const App: React.FC = () => {
       <div className="incident-map-container">
         <MapComponent
           onNeighborhoodClick={handleNeighborhoodClick}
-          onCategoryFilterSelect={handleIncidentCategorySelect}
+          onIncidentFilterChange={handleIncidentFilterChange}
         />
       </div>
       <div className="details-container">

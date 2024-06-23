@@ -6,9 +6,14 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster";
 import "leaflet.heat";
 import L, { GeoJSONOptions } from "leaflet";
-import { RawNeighborhoodProps } from "./types";
+import {
+  RawNeighborhoodProps,
+  IncidentFilterProps,
+  defaultIncidentFilters,
+} from "./types";
 import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
+import Form from "react-bootstrap/Form";
 
 interface IncidentPointsResp {
   points: [number, number, string][];
@@ -37,12 +42,14 @@ const HeatmapLayer: React.FC<{
 
 const MapComponent: React.FC<{
   onNeighborhoodClick: (neighborhood: RawNeighborhoodProps) => void;
-  onCategoryFilterSelect: (categories: string[]) => void;
-}> = ({ onNeighborhoodClick, onCategoryFilterSelect }) => {
+  onIncidentFilterChange: (incidentFilters: IncidentFilterProps) => void;
+}> = ({ onNeighborhoodClick, onIncidentFilterChange }) => {
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
     null
   );
-  const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [incidentFilters, setIncidentFilters] = useState<IncidentFilterProps>(
+    defaultIncidentFilters()
+  );
   const [heatmapData, setHeatmapData] = useState<[number, number, number][]>(
     []
   );
@@ -71,14 +78,16 @@ const MapComponent: React.FC<{
 
   useEffect(() => {
     const pts = fullHeatmapData.filter((pt) =>
-      categoryFilters.length > 0 ? categoryFilters.includes(pt[2]) : true
+      incidentFilters.categoryFilters.length > 0
+        ? incidentFilters.categoryFilters.includes(pt[2])
+        : true
     );
     let intensity = 1;
     if (pts.length < 1000) {
       intensity = 5;
     }
     setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
-  }, [categoryFilters, fullHeatmapData]);
+  }, [incidentFilters, fullHeatmapData]);
 
   const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
     const properties = feature.properties as RawNeighborhoodProps;
@@ -109,8 +118,14 @@ const MapComponent: React.FC<{
     onEachFeature,
   };
   const handleIncidentCategorySelect = (categories: string[]) => {
-    setCategoryFilters(categories);
-    onCategoryFilterSelect(categories);
+    setIncidentFilters({
+      ...incidentFilters,
+      categoryFilters: categories,
+    });
+    onIncidentFilterChange({
+      ...incidentFilters,
+      categoryFilters: categories,
+    });
   };
 
   return (
@@ -138,6 +153,42 @@ const MapComponent: React.FC<{
               incidents{" "}
             </div>
           )}
+        </div>
+        <div>
+          <p className="time-period-title">Time Period</p>
+          <Form className="time-period-form">
+            <div key="inline-radio" className="mb-3">
+              <Form.Check
+                inline
+                defaultChecked
+                label="1 Year"
+                name="time-period"
+                type="radio"
+                className="custom-check"
+              />
+              <Form.Check
+                inline
+                label="3 Months"
+                name="time-period"
+                type="radio"
+                className="custom-check"
+              />
+              <Form.Check
+                inline
+                label="1 Month"
+                name="time-period"
+                type="radio"
+                className="custom-check"
+              />
+              <Form.Check
+                inline
+                label="1 Week"
+                name="time-period"
+                type="radio"
+                className="custom-check"
+              />
+            </div>
+          </Form>
         </div>
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
       </div>

@@ -27,6 +27,9 @@ async def get_neighborhood(
     name: str = Path(..., description="The name of the neighborhood, URL-encoded"),
     categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by")
 ):
+    if not name:
+        raise HTTPException(status_code=404, detail="Neighborhood not found")
+
     name = unquote(name)
     cols = [
         'analysis_neighborhood',
@@ -52,17 +55,16 @@ async def get_neighborhood(
         except KeyError:
             count = 0
         counts_by_hour_resp.append(count)
-    if name:
-        return {
-            "category_counts": [
-                { 'name': neighborhood_name, 'count': count } for
-                neighborhood_name, count in category_counts.items()
-            ],
-            "counts_by_hour": counts_by_hour_resp,
-            "median_per_day": int(df.groupby('incident_date').size().median())
+    
+    return {
+        "category_counts": [
+            { 'name': neighborhood_name, 'count': count } for
+            neighborhood_name, count in category_counts.items()
+        ],
+        "counts_by_hour": counts_by_hour_resp,
+        "median_per_day": int(df.groupby('incident_date').size().median())
 
-        }
-    raise HTTPException(status_code=404, detail="Neighborhood not found")
+    }
 
 @router.get('/incident-points')
 async def get_incident_points():
