@@ -20,6 +20,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
+    "date-fns": "^3.6.0",
     "global": "^4.4.0",
     "leaflet": "^1.9.4",
     "leaflet-ajax": "^2.1.0",

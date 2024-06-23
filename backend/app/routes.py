@@ -91,15 +91,16 @@ async def get_neighborhood(
 
 @router.get('/incident-points')
 async def get_incident_points():
-    data = await IncidentReport.all().values('latitude', 'longitude', 'user_friendly_category')
+    data = await IncidentReport.all().values('latitude', 'longitude', 'user_friendly_category', 'incident_datetime')
     points = []
     for report in data:
         category = report.get('user_friendly_category')
         lat = report.get('latitude')
         lon = report.get('longitude')
+        incident_datetime = report.get('incident_datetime')
         if not lat or not lon:
             continue
-        points.append((lat, lon, category))
+        points.append((lat, lon, category, incident_datetime))
     return {
         "points": points
     }

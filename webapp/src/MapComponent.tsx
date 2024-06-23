@@ -14,6 +14,7 @@ import {
 import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
 import Form from "react-bootstrap/Form";
+import { addMonths, addWeeks } from "date-fns";
 
 interface IncidentPointsResp {
   points: [number, number, string][];
@@ -77,14 +78,40 @@ const MapComponent: React.FC<{
   }, []);
 
   useEffect(() => {
-    const pts = fullHeatmapData.filter((pt) =>
-      incidentFilters.categories.length > 0
-        ? incidentFilters.categories.includes(pt[2])
-        : true
-    );
+    const filterFn = (pt: any) => {
+      if (
+        incidentFilters.categories.length > 0 &&
+        !incidentFilters.categories.includes(pt[2])
+      ) {
+        return false;
+      }
+
+      if (incidentFilters.timePeriod != "1YEAR") {
+        let cutoffDate = new Date();
+        switch (incidentFilters.timePeriod) {
+          case "3MONTH":
+            cutoffDate = addMonths(new Date(), -3);
+            break;
+          case "1MONTH":
+            cutoffDate = addMonths(new Date(), -1);
+            break;
+          case "1WEEK":
+            cutoffDate = addWeeks(new Date(), -1);
+            break;
+        }
+        if (new Date(pt[3]) < cutoffDate) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+    const pts = fullHeatmapData.filter((pt) => filterFn(pt));
     let intensity = 1;
-    if (pts.length < 1000) {
+    if (pts.length < 500) {
       intensity = 5;
+    } else {
+      intensity = 3;
     }
     setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
   }, [incidentFilters, fullHeatmapData]);
@@ -129,6 +156,10 @@ const MapComponent: React.FC<{
   };
 
   const handleTimePeriodChange = (event: any) => {
+    setIncidentFilters({
+      ...incidentFilters,
+      timePeriod: event.target.value,
+    });
     onIncidentFilterChange({
       ...incidentFilters,
       timePeriod: event.target.value,
