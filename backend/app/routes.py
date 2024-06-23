@@ -20,7 +20,7 @@ async def get_data_last_updated():
 @router.get('/incident-categories')
 async def get_incident_categories():
     categories = await IncidentReport.all().distinct().values_list('user_friendly_category', flat=True)
-    return { 'categories': categories }
+    return { 'categories': [cat for cat in categories if bool(cat)] }
 
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(

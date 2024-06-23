@@ -4,7 +4,7 @@ import time
 
 from config import DB_URL
 from tortoise import Tortoise
-from .models import IncidentReport
+from models import IncidentReport
 from utils import compute_user_friendly_category
 
 logging.basicConfig(level=logging.INFO)
