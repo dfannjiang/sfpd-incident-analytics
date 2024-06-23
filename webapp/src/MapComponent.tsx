@@ -17,7 +17,7 @@ import Form from "react-bootstrap/Form";
 import { addMonths, addWeeks } from "date-fns";
 
 interface IncidentPointsResp {
-  points: [number, number, string][];
+  points: [number, number, string, string][];
 }
 
 const HeatmapLayer: React.FC<{
@@ -55,7 +55,7 @@ const MapComponent: React.FC<{
     []
   );
   const [fullHeatmapData, setFullHeatmapData] = useState<
-    [number, number, string][]
+    [number, number, string, string][]
   >([]);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
 
@@ -78,7 +78,7 @@ const MapComponent: React.FC<{
   }, []);
 
   useEffect(() => {
-    const filterFn = (pt: any) => {
+    const filterFn = (pt: [number, number, string, string]) => {
       if (
         incidentFilters.categories.length > 0 &&
         !incidentFilters.categories.includes(pt[2])
