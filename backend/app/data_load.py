@@ -11,7 +11,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
 from tortoise import Tortoise
-from utils import compute_user_friendly_category
+from utils import compute_user_friendly_category, is_daylight
 
 
 logging.basicConfig(level=logging.INFO)
@@ -129,7 +129,8 @@ async def data_update():
           analysis_neighborhood,
           float(raw_incident.get('latitude')),
           float(raw_incident.get('longitude')),
-          compute_user_friendly_category(incident_category, incident_description)
+          compute_user_friendly_category(incident_category, incident_description),
+          is_daylight(incident_dt)
         ))
       except Exception as e:
         logging.error(f'Skipping failure to read raw incident from socrata: {str(e)}. Traceback: {traceback.format_exc()}')
