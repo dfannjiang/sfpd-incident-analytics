@@ -37,6 +37,7 @@ class IncidentReport(Model):
     latitude = fields.DecimalField(9, 6, null=True)
     longitude = fields.DecimalField(9, 6, null=True)
     user_friendly_category = fields.CharField(max_length=80)
+    is_daylight = fields.BooleanField(null=True)
 
 class DataLoadLog(Model):
     id = fields.IntField(pk=True)
