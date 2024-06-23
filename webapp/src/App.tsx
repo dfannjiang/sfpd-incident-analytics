@@ -144,7 +144,10 @@ const App: React.FC = () => {
           ) : selectedNeighborhood && neighborhoodData ? (
             <div className="neighborhood-detail-container">
               <h2>{selectedNeighborhood.name} District</h2>
-              <NeighborhoodDetails {...neighborhoodData} />
+              <NeighborhoodDetails
+                neighborhoodData={neighborhoodData}
+                incidentFilters={incidentFilters}
+              />
             </div>
           ) : selectedNeighborhood ? (
             <div>

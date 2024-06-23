@@ -10,10 +10,16 @@ interface IncidentCount {
   name: string;
   count: number;
 }
+
+interface DayCount {
+  day: string;
+  count: number;
+}
 export interface NeighborhoodDataResp {
   categoryCounts: IncidentCount[];
   countsByHour: number[];
   medianPerDay: number;
+  countsByDay: DayCount[];
 }
 
 export interface IncidentFilterProps {

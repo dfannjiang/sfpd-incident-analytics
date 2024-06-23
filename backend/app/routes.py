@@ -66,7 +66,9 @@ async def get_neighborhood(
             "counts_by_hour": [],
             "median_per_day": 0
         }
+    
 
+    counts_by_date = df.groupby('incident_date').size().sort_index()
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
     df['hour_of_day'] = df.incident_datetime.dt.hour
@@ -79,14 +81,20 @@ async def get_neighborhood(
             count = 0
         counts_by_hour_resp.append(count)
 
+    counts_by_day = []
+    for day_count in counts_by_date.reset_index().values.tolist():
+        counts_by_day.append({
+            "day": day_count[0], "count": day_count[1]
+        })
+
     return {
         "category_counts": [
             { 'name': neighborhood_name, 'count': count } for
             neighborhood_name, count in category_counts.items()
         ],
         "counts_by_hour": counts_by_hour_resp,
-        "median_per_day": int(df.groupby('incident_date').size().median())
-
+        "median_per_day": int(df.groupby('incident_date').size().median()),
+        "counts_by_day": counts_by_day
     }
 
 @router.get('/incident-points')
