@@ -25,9 +25,11 @@ export interface NeighborhoodDataResp {
 export interface IncidentFilterProps {
   categories: string[];
   timePeriod: string;
+  filterOnDaylight: boolean | null;
 }
 
 export const defaultIncidentFilters = (): IncidentFilterProps => ({
   categories: [],
   timePeriod: "1YEAR",
+  filterOnDaylight: null,
 });

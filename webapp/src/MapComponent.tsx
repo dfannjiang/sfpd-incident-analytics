@@ -13,11 +13,12 @@ import {
 } from "./types";
 import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
-import Form from "react-bootstrap/Form";
 import { addMonths, addWeeks } from "date-fns";
+import TimePeriodFilter from "./TimePeriodFilter";
+import TimeOfDayFilter from "./TimeOfDayFilter.tsx";
 
 interface IncidentPointsResp {
-  points: [number, number, string, string][];
+  points: [number, number, string, string, boolean][];
 }
 
 const HeatmapLayer: React.FC<{
@@ -55,7 +56,7 @@ const MapComponent: React.FC<{
     []
   );
   const [fullHeatmapData, setFullHeatmapData] = useState<
-    [number, number, string, string][]
+    [number, number, string, string, boolean][]
   >([]);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
 
@@ -78,7 +79,7 @@ const MapComponent: React.FC<{
   }, []);
 
   useEffect(() => {
-    const filterFn = (pt: [number, number, string, string]) => {
+    const filterFn = (pt: [number, number, string, string, boolean]) => {
       if (
         incidentFilters.categories.length > 0 &&
         !incidentFilters.categories.includes(pt[2])
@@ -100,6 +101,12 @@ const MapComponent: React.FC<{
             break;
         }
         if (new Date(pt[3]) < cutoffDate) {
+          return false;
+        }
+      }
+
+      if (incidentFilters.filterOnDaylight != null) {
+        if (incidentFilters.filterOnDaylight != pt[4]) {
           return false;
         }
       }
@@ -166,6 +173,17 @@ const MapComponent: React.FC<{
     });
   };
 
+  const handleTimeOfDayChange = (filterOnDaylight: boolean | null) => {
+    setIncidentFilters({
+      ...incidentFilters,
+      filterOnDaylight: filterOnDaylight,
+    });
+    onIncidentFilterChange({
+      ...incidentFilters,
+      filterOnDaylight: filterOnDaylight,
+    });
+  };
+
   return (
     <div className="map-container-wrapper">
       <MapContainer
@@ -192,46 +210,8 @@ const MapComponent: React.FC<{
             </div>
           )}
         </div>
-        <div>
-          <p className="time-period-title">Time Period</p>
-          <Form className="time-period-form" onChange={handleTimePeriodChange}>
-            <Form.Group key="inline-radio" className="mb-3">
-              <Form.Check
-                inline
-                defaultChecked
-                label="1 Year"
-                value="1YEAR"
-                name="time-period"
-                type="radio"
-                className="custom-check"
-              />
-              <Form.Check
-                inline
-                label="3 Months"
-                value="3MONTH"
-                name="time-period"
-                type="radio"
-                className="custom-check"
-              />
-              <Form.Check
-                inline
-                label="1 Month"
-                value="1MONTH"
-                name="time-period"
-                type="radio"
-                className="custom-check"
-              />
-              <Form.Check
-                inline
-                label="1 Week"
-                value="1WEEK"
-                name="time-period"
-                type="radio"
-                className="custom-check"
-              />
-            </Form.Group>
-          </Form>
-        </div>
+        <TimePeriodFilter onTimePeriodChange={handleTimePeriodChange} />
+        <TimeOfDayFilter onTimeOfDayChange={handleTimeOfDayChange} />
         <IncidentCategoryFilter onOptionSelect={handleIncidentCategorySelect} />
       </div>
     </div>

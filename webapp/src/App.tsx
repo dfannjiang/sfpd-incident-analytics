@@ -87,25 +87,18 @@ const App: React.FC = () => {
         let url = `${apiUrl}/neighborhoods/${encodeURIComponent(
           neighborhood.name
         )}`;
+        let params = new URLSearchParams();
         for (let i = 0; i < categoryFilters.length; i++) {
-          if (i > 0) {
-            url += "&";
-          } else {
-            url += "?";
-          }
-          url += `categories=${categoryFilters[i]}`;
+          params.append("categories", categoryFilters[i]);
         }
-
-        if (incidentFilters.timePeriod != "1YEAR") {
-          if (!url.includes("?")) {
-            url += "?";
-          } else {
-            url += "&";
-          }
-          url += `time_period=${incidentFilters.timePeriod}`;
+        params.append("time_period", incidentFilters.timePeriod);
+        if (incidentFilters.filterOnDaylight != null) {
+          params.append(
+            "is_daylight",
+            incidentFilters.filterOnDaylight.toString()
+          );
         }
-
-        const rawResp = await fetch(url);
+        const rawResp = await fetch(url + "?" + params.toString());
         const apiResp = await rawResp.json();
         if (!rawResp.ok) {
           // resp is not OK (e.g., 404, 500, etc.)

@@ -28,7 +28,8 @@ async def get_incident_categories():
 async def get_neighborhood(
     name: str = Path(..., description="The name of the neighborhood, URL-encoded"),
     categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by"),
-    time_period: str = '1YEAR'
+    time_period: str = '1YEAR',
+    is_daylight: Optional[bool] = None
 ):
     if not name:
         raise HTTPException(status_code=404, detail="Neighborhood not found")
@@ -57,6 +58,9 @@ async def get_neighborhood(
     else:
         raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
     filters['incident_datetime__gt'] = cutoff_date
+
+    if is_daylight is not None:
+        filters['is_daylight'] = is_daylight
 
     data = await IncidentReport.filter(**filters).values(*cols)
     df = pd.DataFrame(data)
@@ -102,16 +106,19 @@ async def get_neighborhood(
 
 @router.get('/incident-points')
 async def get_incident_points():
-    data = await IncidentReport.all().values('latitude', 'longitude', 'user_friendly_category', 'incident_datetime')
+    data = await IncidentReport.all().values('latitude', 'longitude',
+                                             'user_friendly_category',
+                                             'incident_datetime', 'is_daylight')
     points = []
     for report in data:
         category = report.get('user_friendly_category')
         lat = report.get('latitude')
         lon = report.get('longitude')
         incident_datetime = report.get('incident_datetime')
+        is_daylight = report.get('is_daylight')
         if not lat or not lon:
             continue
-        points.append((lat, lon, category, incident_datetime))
+        points.append((lat, lon, category, incident_datetime, is_daylight))
     return {
         "points": points
     }
