@@ -7,7 +7,7 @@ const TimePeriodFilter: React.FC<{
     <div>
       <p className="time-period-title">Time Period</p>
       <Form className="time-period-form" onChange={onTimePeriodChange}>
-        <Form.Group key="inline-radio" className="mb-3">
+        <Form.Group key="inline-radio">
           <Form.Check
             inline
             defaultChecked

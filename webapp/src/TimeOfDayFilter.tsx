@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FaSun, FaMoon } from "react-icons/fa";
 
@@ -48,15 +48,6 @@ const TimeOfDayFilter: React.FC<{
       }
     }
   };
-
-  const daylightTooltip = () => (
-    <Tooltip id="sun-tooltip">Include daylight hours</Tooltip>
-  );
-
-  const nighttimeTooltip = useMemo(
-    () => <Tooltip id="night-tooltip">Include nighttime hours</Tooltip>,
-    []
-  );
 
   return (
     <div>
