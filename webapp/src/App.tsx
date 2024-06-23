@@ -105,7 +105,15 @@ const App: React.FC = () => {
           url += `time_period=${incidentFilters.timePeriod}`;
         }
 
-        const apiResp = await fetch(url).then((response) => response.json());
+        const rawResp = await fetch(url);
+        const apiResp = await rawResp.json();
+        if (!rawResp.ok) {
+          // resp is not OK (e.g., 404, 500, etc.)
+          setSelectNeighborhoodErr(true);
+          console.error(
+            `HTTP error! Response: ${rawResp.status}. Error: ${apiResp.detail}`
+          );
+        }
         const neighborhoodData = keysToCamelCase(
           apiResp
         ) as NeighborhoodDataResp;

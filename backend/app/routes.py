@@ -32,7 +32,6 @@ async def get_neighborhood(
 ):
     if not name:
         raise HTTPException(status_code=404, detail="Neighborhood not found")
-
     name = unquote(name)
     cols = [
         'analysis_neighborhood',
@@ -45,18 +44,19 @@ async def get_neighborhood(
     }
     if categories:
         filters['user_friendly_category__in'] = categories
-    if time_period != '1YEAR':
-        today = datetime.today()
-        if time_period == '3MONTH':
-            cutoff_date = today - relativedelta(months=3)
-        elif time_period == '1MONTH':
-            cutoff_date = today - relativedelta(months=1)
-        elif time_period == '1WEEK':
-            cutoff_date = today - relativedelta(weeks=1)
-        else:
-            raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
-        
-        filters['incident_datetime__gt'] = cutoff_date
+    
+    today = datetime.today()
+    if time_period == '1YEAR':
+        cutoff_date = today - relativedelta(years=1)
+    elif time_period == '3MONTH':
+        cutoff_date = today - relativedelta(months=3)
+    elif time_period == '1MONTH':
+        cutoff_date = today - relativedelta(months=1)
+    elif time_period == '1WEEK':
+        cutoff_date = today - relativedelta(weeks=1)
+    else:
+        raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
+    filters['incident_datetime__gt'] = cutoff_date
 
     data = await IncidentReport.filter(**filters).values(*cols)
     df = pd.DataFrame(data)
@@ -68,7 +68,7 @@ async def get_neighborhood(
         }
     
 
-    counts_by_date = df.groupby('incident_date').size().sort_index()
+    counts_by_date = df.groupby('incident_date').size()
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
     df['hour_of_day'] = df.incident_datetime.dt.hour
@@ -81,11 +81,14 @@ async def get_neighborhood(
             count = 0
         counts_by_hour_resp.append(count)
 
+    date_range = pd.date_range(start=cutoff_date, end=today)
     counts_by_day = []
-    for day_count in counts_by_date.reset_index().values.tolist():
-        counts_by_day.append({
-            "day": day_count[0], "count": day_count[1]
-        })
+    for dt in date_range:
+        try:
+            count = int(counts_by_date.loc[dt.date()])
+        except KeyError:
+            count = 0
+        counts_by_day.append({ "day": dt.date(), "count": count })
 
     return {
         "category_counts": [
