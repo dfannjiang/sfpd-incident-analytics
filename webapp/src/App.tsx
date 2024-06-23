@@ -130,6 +130,19 @@ const App: React.FC = () => {
     setIncidentFilters(incidentFilters);
   };
 
+  const timePeriodDesc = (timePeriod: string) => {
+    switch (timePeriod) {
+      case "1YEAR":
+        return "past year";
+      case "3MONTH":
+        return "past 3 months";
+      case "1MONTH":
+        return "past month";
+      case "1WEEK":
+        return "past week";
+    }
+  };
+
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
       <IntroModal show={showIntroModal} handleClose={handleIntroModalClose} />
@@ -176,7 +189,7 @@ const App: React.FC = () => {
         </div>
         <div className="footer">
           <div style={{ marginLeft: "2px" }}>
-            Showing data for the past year
+            Showing data for the {timePeriodDesc(incidentFilters.timePeriod)}
           </div>
           <div className="last-updated-str">
             {lastUpdated && `Data last updated: ${lastUpdated.toDateString()}`}

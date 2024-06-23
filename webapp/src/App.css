@@ -85,7 +85,7 @@ body,
   color: #fff; /* White text color */
   min-height: 100vh;
   border: 20px;
-  flex: 1;
+  flex: 4;
   display: flex;
   flex-direction: column;
 }
@@ -95,7 +95,7 @@ body,
 }
 
 .incident-map-container {
-  flex: 2;
+  flex: 5;
 }
 
 .map-container-wrapper {

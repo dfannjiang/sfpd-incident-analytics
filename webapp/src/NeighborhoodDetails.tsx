@@ -239,7 +239,12 @@ const NeighborhoodDetails: React.FC<{
           }}
         >
           <Tooltip content={<IncidentsByDayTooltip />} />
-          <XAxis dataKey="name" angle={-45} tickFormatter={formatDateLabel} />
+          <XAxis
+            dataKey="name"
+            angle={-45}
+            tickFormatter={formatDateLabel}
+            dy={10}
+          />
           <YAxis width={35} />
           <Line
             type="monotone"
