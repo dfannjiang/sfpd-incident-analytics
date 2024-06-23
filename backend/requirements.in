@@ -1,8 +1,10 @@
 # requirements.in
 aerich
+astral
 asyncpg
 fastapi
 pandas
+pytz
 sodapy
 tortoise-orm
 uvicorn
