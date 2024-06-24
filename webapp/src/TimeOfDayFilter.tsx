@@ -51,26 +51,30 @@ const TimeOfDayFilter: React.FC<{
 
   return (
     <div>
-      <p className="time-period-title">Daylight/Nighttime</p>
-      <Form style={{ marginLeft: "10px" }}>
-        <Form.Group className="d-flex align-items-center">
-          <OverlayTrigger
-            overlay={<Tooltip id="sun-tooltip">Include daylight hours</Tooltip>}
+      <Form>
+        <Form.Group className="d-flex flex-row">
+          <Form.Group
+            className="d-flex flex-column"
+            style={{ marginLeft: "10px" }}
           >
+            <Form.Label className="time-period-title m-0">
+              Daylight hours
+            </Form.Label>
             <Form.Check
               type="switch"
               id="daylight"
               label={<FaSun />}
-              className="me-3"
               onChange={handleDaylightChange}
               checked={daylight}
             />
-          </OverlayTrigger>
-          <OverlayTrigger
-            overlay={
-              <Tooltip id="night-tooltip">Include nighttime hours</Tooltip>
-            }
+          </Form.Group>
+          <Form.Group
+            className="d-flex flex-column"
+            style={{ marginLeft: "10px" }}
           >
+            <Form.Label className="time-period-title m-0">
+              Nighttime hours
+            </Form.Label>
             <Form.Check
               type="switch"
               id="nighttime"
@@ -78,8 +82,9 @@ const TimeOfDayFilter: React.FC<{
               onChange={handleNighttimeChange}
               checked={nighttime}
             />
-          </OverlayTrigger>
+          </Form.Group>
         </Form.Group>
+        .
       </Form>
     </div>
   );
