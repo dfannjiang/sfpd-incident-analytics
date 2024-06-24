@@ -81,7 +81,10 @@ async def get_neighborhood(
 
     filters = get_db_filters(categories, time_period, is_daylight)
     filters["analysis_neighborhood"] = name
+
+    start = time.time()
     data = await IncidentReport.filter(**filters, join_type='AND').values(*cols)
+    logging.info(f'Getting IncidentReport with filters {filters} took {time.time() - start}s')
     df = pd.DataFrame(data)
     if df.shape[0] == 0:
         return {
@@ -117,6 +120,8 @@ async def get_neighborhood(
         except KeyError:
             count = 0
         counts_by_day.append({ "day": dt.date(), "count": count })
+    
+    logging.info(f'get_neighborhood filters {filters} took {time.time() - start}s')
 
     return {
         "category_counts": [
@@ -155,6 +160,6 @@ async def get_points_for_map():
 async def get_incident_points():
     start = time.time()
     points = await get_points_for_map()
-    logging.info(f'IncidentReport.all() took {time.time() - start}s')
+    logging.info(f'get_points_for_map took {time.time() - start}s')
     resp_body = {'points': points}
     return JSONResponse(content=resp_body)
