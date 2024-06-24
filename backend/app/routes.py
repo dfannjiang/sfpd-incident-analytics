@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Path, Query
 from tortoise.functions import Max
 from typing import List, Optional
 from urllib.parse import unquote
+from .utils import sf_local_tz
 
 router = APIRouter()
 
@@ -58,7 +59,6 @@ async def get_neighborhood(
     else:
         raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
     filters['incident_datetime__gt'] = cutoff_date
-
     if is_daylight is not None:
         filters['is_daylight'] = is_daylight
 
@@ -70,12 +70,13 @@ async def get_neighborhood(
             "counts_by_hour": [],
             "median_per_day": 0
         }
-    
+    df['incident_datetime_local'] = df.incident_datetime.dt.tz_convert(sf_local_tz)
+    df['incident_date_local'] = df.incident_datetime_local.dt.date
 
-    counts_by_date = df.groupby('incident_date').size()
+    counts_by_date = df.groupby('incident_date_local').size()
     category_counts = df.user_friendly_category.value_counts().to_dict()
 
-    df['hour_of_day'] = df.incident_datetime.dt.hour
+    df['hour_of_day'] = df.incident_datetime_local.dt.hour
     counts_by_hour = df.groupby('hour_of_day').size()
     counts_by_hour_resp = []
     for i in range(24):
@@ -100,7 +101,7 @@ async def get_neighborhood(
             neighborhood_name, count in category_counts.items()
         ],
         "counts_by_hour": counts_by_hour_resp,
-        "median_per_day": int(df.groupby('incident_date').size().median()),
+        "median_per_day": int(df.groupby('incident_date_local').size().median()),
         "counts_by_day": counts_by_day
     }
 
