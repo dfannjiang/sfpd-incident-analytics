@@ -1,5 +1,6 @@
 import pandas as pd
 import time
+import logging
 
 from aiocache import cached, SimpleMemoryCache
 from datetime import datetime
@@ -15,7 +16,6 @@ from .utils import sf_local_tz
 ######
 # NOTE: Tortoise ORM converts and returns datetime values to UTC
 ######
-
 router = APIRouter()
 
 def get_cutoff_date(time_period: str) -> Tuple[datetime, datetime]:
@@ -155,6 +155,6 @@ async def get_points_for_map():
 async def get_incident_points():
     start = time.time()
     points = await get_points_for_map()
-    print(f'IncidentReport.all() took {time.time() - start}s')
+    logging.info(f'IncidentReport.all() took {time.time() - start}s')
     resp_body = {'points': points}
     return JSONResponse(content=resp_body)
