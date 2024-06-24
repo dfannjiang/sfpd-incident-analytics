@@ -83,7 +83,6 @@ const TimeOfDayFilter: React.FC<{
             />
           </Form.Group>
         </Form.Group>
-        .
       </Form>
     </div>
   );
