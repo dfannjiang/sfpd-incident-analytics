@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 const TimeOfDayFilter: React.FC<{
