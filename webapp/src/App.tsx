@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
 import NeighborhoodDetails from "./NeighborhoodDetails";
-import keysToCamelCase from "./keysToCamelCase";
+import { keysToCamelCase, formatIncidentFilterStr } from "./utils";
 import {
   RawNeighborhoodProps,
   NeighborhoodProps,
@@ -76,23 +76,13 @@ const App: React.FC = () => {
       incidentFilters: IncidentFilterProps
     ) => {
       try {
-        const categoryFilters = incidentFilters.categories;
         setSelectNeighborhoodErr(false);
         let url = `${apiUrl}/neighborhoods/${encodeURIComponent(
           neighborhood.name
         )}`;
-        let params = new URLSearchParams();
-        for (let i = 0; i < categoryFilters.length; i++) {
-          params.append("categories", categoryFilters[i]);
-        }
-        params.append("time_period", incidentFilters.timePeriod);
-        if (incidentFilters.filterOnDaylight != null) {
-          params.append(
-            "is_daylight",
-            incidentFilters.filterOnDaylight.toString()
-          );
-        }
-        const rawResp = await fetch(url + "?" + params.toString());
+        const rawResp = await fetch(
+          url + formatIncidentFilterStr(incidentFilters)
+        );
         const apiResp = await rawResp.json();
         if (!rawResp.ok) {
           // resp is not OK (e.g., 404, 500, etc.)

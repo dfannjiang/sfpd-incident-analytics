@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from .models import DataLoadLog, IncidentReport
 from fastapi import APIRouter, HTTPException, Path, Query
 from tortoise.functions import Max
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from urllib.parse import unquote
 from .utils import sf_local_tz
 
@@ -14,6 +14,35 @@ from .utils import sf_local_tz
 ######
 
 router = APIRouter()
+
+def get_cutoff_date(time_period: str) -> Tuple[datetime, datetime]:
+    today = datetime.today()
+    if time_period == '1YEAR':
+        cutoff_date = today - relativedelta(years=1)
+    elif time_period == '3MONTH':
+        cutoff_date = today - relativedelta(months=3)
+    elif time_period == '1MONTH':
+        cutoff_date = today - relativedelta(months=1)
+    elif time_period == '1WEEK':
+        cutoff_date = today - relativedelta(weeks=1)
+    else:
+        raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
+    return today, cutoff_date
+
+def get_db_filters(
+    categories: Optional[List[str]],
+    time_period: str,
+    is_daylight: Optional[bool]
+) -> str:
+    filters = {}
+    if categories:
+        filters['user_friendly_category__in'] = categories
+    _, cutoff_date = get_cutoff_date(time_period)
+    filters['incident_datetime__gt'] = cutoff_date
+    if is_daylight is not None:
+        filters['is_daylight'] = is_daylight
+    return filters
+    
 
 @router.get('/data-last-updated')
 async def get_data_last_updated():
@@ -46,27 +75,9 @@ async def get_neighborhood(
         'incident_datetime',
         'incident_date'
     ]
-    filters = {
-        "analysis_neighborhood": name
-    }
-    if categories:
-        filters['user_friendly_category__in'] = categories
-    
-    today = datetime.today()
-    if time_period == '1YEAR':
-        cutoff_date = today - relativedelta(years=1)
-    elif time_period == '3MONTH':
-        cutoff_date = today - relativedelta(months=3)
-    elif time_period == '1MONTH':
-        cutoff_date = today - relativedelta(months=1)
-    elif time_period == '1WEEK':
-        cutoff_date = today - relativedelta(weeks=1)
-    else:
-        raise HTTPException(status_code=404, detail=f"Invalid time period: {time_period}")
-    filters['incident_datetime__gt'] = cutoff_date
-    if is_daylight is not None:
-        filters['is_daylight'] = is_daylight
 
+    filters = get_db_filters(categories, time_period, is_daylight)
+    filters["analysis_neighborhood"] = name
     data = await IncidentReport.filter(**filters, join_type='AND').values(*cols)
     df = pd.DataFrame(data)
     if df.shape[0] == 0:
@@ -94,6 +105,7 @@ async def get_neighborhood(
             count = 0
         counts_by_hour_resp.append(count)
 
+    today, cutoff_date = get_cutoff_date(time_period)
     date_range = pd.date_range(start=cutoff_date, end=today-relativedelta(days=1))
     counts_by_day = []
     for dt in date_range:
@@ -114,20 +126,21 @@ async def get_neighborhood(
     }
 
 @router.get('/incident-points')
-async def get_incident_points():
-    data = await IncidentReport.all().values('latitude', 'longitude',
-                                             'user_friendly_category',
-                                             'incident_datetime', 'is_daylight')
+async def get_incident_points(
+    categories: Optional[List[str]] = Query(None, description="The categories to filter neighborhoods by"),
+    time_period: str = '1YEAR',
+    is_daylight: Optional[bool] = None
+):
+    filters = get_db_filters(categories, time_period, is_daylight)
+    data = await IncidentReport.filter(**filters, join_type='AND').values(
+        'latitude', 'longitude')
     points = []
     for report in data:
-        category = report.get('user_friendly_category')
         lat = report.get('latitude')
         lon = report.get('longitude')
-        incident_datetime = report.get('incident_datetime')
-        is_daylight = report.get('is_daylight')
         if not lat or not lon:
             continue
-        points.append((lat, lon, category, incident_datetime, is_daylight))
+        points.append((lat, lon))
     return {
         "points": points
     }
