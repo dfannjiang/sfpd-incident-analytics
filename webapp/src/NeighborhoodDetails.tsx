@@ -273,7 +273,7 @@ const NeighborhoodDetails: React.FC<{
             }}
             interval={0}
           />
-          <YAxis width={35} tickFormatter={formatPercentLabel} />
+          <YAxis width={45} tickFormatter={formatPercentLabel} />
           <Tooltip content={<IncidentsByHourTooltip />} />
           <Line
             type="monotone"
