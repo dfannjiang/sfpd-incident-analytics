@@ -15,10 +15,10 @@ import { apiUrl } from "./config.ts";
 import IncidentCategoryFilter from "./IncidentCategoryFilter";
 import TimePeriodFilter from "./TimePeriodFilter";
 import TimeOfDayFilter from "./TimeOfDayFilter.tsx";
-import { formatIncidentFilterStr } from "./utils";
+import { addMonths, addWeeks } from "date-fns";
 
 interface IncidentPointsResp {
-  points: [number, number][];
+  points: [number, number, string, string, boolean][];
 }
 
 const HeatmapLayer: React.FC<{
@@ -55,9 +55,9 @@ const MapComponent: React.FC<{
   const [heatmapData, setHeatmapData] = useState<[number, number, number][]>(
     []
   );
-  const [fullHeatmapData, setFullHeatmapData] = useState<[number, number][]>(
-    []
-  );
+  const [fullHeatmapData, setFullHeatmapData] = useState<
+    [number, number, string, string, boolean][]
+  >([]);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -68,25 +68,60 @@ const MapComponent: React.FC<{
   }, []);
 
   useEffect(() => {
-    (async (incidentFilters: IncidentFilterProps) => {
+    (async () => {
       setApiLoading(true);
-      const apiResp = (await fetch(
-        `${apiUrl}/incident-points${formatIncidentFilterStr(incidentFilters)}`
-      ).then((response) => response.json())) as IncidentPointsResp;
+      const apiResp = (await fetch(`${apiUrl}/incident-points`).then(
+        (response) => response.json()
+      )) as IncidentPointsResp;
       setApiLoading(false);
       setFullHeatmapData(apiResp.points);
-    })(incidentFilters);
-  }, [incidentFilters]);
+    })();
+  }, []);
 
   useEffect(() => {
+    const filterFn = (pt: [number, number, string, string, boolean]) => {
+      if (
+        incidentFilters.categories.length > 0 &&
+        !incidentFilters.categories.includes(pt[2])
+      ) {
+        return false;
+      }
+
+      if (incidentFilters.timePeriod != "1YEAR") {
+        let cutoffDate = new Date();
+        switch (incidentFilters.timePeriod) {
+          case "3MONTH":
+            cutoffDate = addMonths(new Date(), -3);
+            break;
+          case "1MONTH":
+            cutoffDate = addMonths(new Date(), -1);
+            break;
+          case "1WEEK":
+            cutoffDate = addWeeks(new Date(), -1);
+            break;
+        }
+        if (new Date(pt[3]) < cutoffDate) {
+          return false;
+        }
+      }
+
+      if (incidentFilters.filterOnDaylight != null) {
+        if (incidentFilters.filterOnDaylight != pt[4]) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+    const pts = fullHeatmapData.filter((pt) => filterFn(pt));
     let intensity = 1;
-    if (fullHeatmapData.length < 500) {
+    if (pts.length < 500) {
       intensity = 5;
     } else {
       intensity = 3;
     }
-    setHeatmapData(fullHeatmapData.map((pt) => [pt[0], pt[1], intensity]));
-  }, [fullHeatmapData]);
+    setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
+  }, [incidentFilters, fullHeatmapData]);
 
   const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
     const properties = feature.properties as RawNeighborhoodProps;
