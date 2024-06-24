@@ -94,7 +94,7 @@ async def get_neighborhood(
             count = 0
         counts_by_hour_resp.append(count)
 
-    date_range = pd.date_range(start=cutoff_date, end=today)
+    date_range = pd.date_range(start=cutoff_date, end=today-relativedelta(days=1))
     counts_by_day = []
     for dt in date_range:
         try:

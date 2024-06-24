@@ -154,7 +154,7 @@ const NeighborhoodDetails: React.FC<{
 
   const formatDateLabel = (value: string) => {
     const date = new Date(value);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${date.getMonth() + 1}/${date.getDate() + 1}`;
   };
   const IncidentsByDayTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
