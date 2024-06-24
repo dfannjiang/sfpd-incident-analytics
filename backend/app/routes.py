@@ -67,13 +67,14 @@ async def get_neighborhood(
     if is_daylight is not None:
         filters['is_daylight'] = is_daylight
 
-    data = await IncidentReport.filter(**filters).values(*cols)
+    data = await IncidentReport.filter(**filters, join_type='AND').values(*cols)
     df = pd.DataFrame(data)
     if df.shape[0] == 0:
         return {
             "category_counts": [],
             "counts_by_hour": [],
-            "median_per_day": 0
+            "median_per_day": 0,
+            "counts_by_day": []
         }
     
     # Converting because Tortoise ORM always returns datetime in UTC

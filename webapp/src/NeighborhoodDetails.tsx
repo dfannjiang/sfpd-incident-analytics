@@ -33,12 +33,6 @@ const NeighborhoodDetails: React.FC<{
   const [medianPerDay, setMedianPerDay] = useState<number | null>(null);
 
   useEffect(() => {
-    if (
-      neighborhoodData.categoryCounts == undefined ||
-      neighborhoodData.categoryCounts.length == 0
-    ) {
-      return;
-    }
     const sortedIncidentCounts = neighborhoodData.categoryCounts.sort(
       (a, b) => {
         return b.count - a.count;
