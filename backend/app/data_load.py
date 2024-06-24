@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
 from tortoise import Tortoise
-from utils import compute_user_friendly_category, is_daylight
+from utils import compute_user_friendly_category, is_daylight, localize_to_sf
 
 
 logging.basicConfig(level=logging.INFO)
@@ -96,8 +96,10 @@ async def data_update():
       if not incident_dt_str:
         num_skipped += 1
         continue
-
+      
+      # Assume raw data from sfdata portal is in local timezone
       incident_dt = datetime.strptime(incident_dt_str, datetime_format)
+      incident_dt = localize_to_sf(incident_dt)
       if incident_dt < cutoff_date:
         num_skipped += 1
         continue

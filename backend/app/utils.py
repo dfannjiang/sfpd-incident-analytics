@@ -61,12 +61,14 @@ def compute_user_friendly_category(
 
 sf_city = LocationInfo('San Francisco', 'America', "America/Los_Angeles", latitude=37.773972, longitude=-122.431297)
 sf_local_tz = timezone(sf_city.timezone)
+def localize_to_sf(dt):
+    return sf_local_tz.localize(dt)
 
 def not_tz_aware(dt):
     return dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None
 
 def is_daylight(dt):
     if not_tz_aware(dt):
-      dt = sf_local_tz.localize(dt)
+      dt = localize_to_sf(dt)
     s = sun(sf_city.observer, date=dt.date(), tzinfo=sf_local_tz)
     return s['sunrise'] <= dt <= s['sunset']
