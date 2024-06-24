@@ -2,6 +2,7 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from .routes import router
 from .config import TORTOISE_ORM
@@ -20,6 +21,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 app.include_router(router)
 

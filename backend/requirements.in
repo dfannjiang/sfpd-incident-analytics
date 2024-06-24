@@ -1,5 +1,6 @@
 # requirements.in
 aerich
+aiocache
 astral
 asyncpg
 fastapi

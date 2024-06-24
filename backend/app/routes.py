@@ -1,9 +1,12 @@
 import pandas as pd
+import time
 
+from aiocache import cached, SimpleMemoryCache
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from .models import DataLoadLog, IncidentReport
 from fastapi import APIRouter, HTTPException, Path, Query
+from fastapi.responses import JSONResponse
 from tortoise.functions import Max
 from typing import List, Optional, Tuple
 from urllib.parse import unquote
@@ -125,8 +128,8 @@ async def get_neighborhood(
         "counts_by_day": counts_by_day
     }
 
-@router.get('/incident-points')
-async def get_incident_points():
+@cached(ttl=60*5, cache=SimpleMemoryCache)  
+async def get_points_for_map():
     data = await IncidentReport.all().values('latitude', 'longitude',
                                              'user_friendly_category',
                                              'incident_datetime', 'is_daylight')
@@ -139,7 +142,19 @@ async def get_incident_points():
         is_daylight = report.get('is_daylight')
         if not lat or not lon:
             continue
-        points.append((lat, lon, category, incident_datetime, is_daylight))
-    return {
-        "points": points
-    }
+        points.append((
+            str(lat),
+            str(lon),
+            category,
+            incident_datetime.astimezone(sf_local_tz).strftime("%Y-%m-%dT%H:%M:%S%z"),
+            is_daylight))
+    return points
+
+# Cache the results for 5min
+@router.get('/incident-points')
+async def get_incident_points():
+    start = time.time()
+    points = await get_points_for_map()
+    print(f'IncidentReport.all() took {time.time() - start}s')
+    resp_body = {'points': points}
+    return JSONResponse(content=resp_body)

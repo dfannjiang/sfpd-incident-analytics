@@ -6,6 +6,8 @@
 #
 aerich==0.7.2
     # via -r requirements.in
+aiocache==0.12.2
+    # via -r requirements.in
 aiosqlite==0.17.0
     # via tortoise-orm
 annotated-types==0.7.0
