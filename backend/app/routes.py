@@ -18,6 +18,9 @@ from .utils import sf_local_tz
 ######
 router = APIRouter()
 
+def time_elapsed(start):
+    return f'{round(time.time() - start, 2)}s'
+
 def get_cutoff_date(time_period: str) -> Tuple[datetime, datetime]:
     today = datetime.today()
     if time_period == '1YEAR':
@@ -84,7 +87,7 @@ async def get_neighborhood(
 
     start = time.time()
     data = await IncidentReport.filter(**filters, join_type='AND').values(*cols)
-    logging.info(f'Getting IncidentReport with filters {filters} took {time.time() - start}s')
+    logging.info(f'Getting IncidentReport with filters {filters} took {time_elapsed(start)}')
     df = pd.DataFrame(data)
     if df.shape[0] == 0:
         return {
@@ -121,7 +124,7 @@ async def get_neighborhood(
             count = 0
         counts_by_day.append({ "day": dt.date(), "count": count })
     
-    logging.info(f'get_neighborhood filters {filters} took {time.time() - start}s')
+    logging.info(f'get_neighborhood filters {filters} took {time_elapsed(start)}')
 
     return {
         "category_counts": [
@@ -160,6 +163,6 @@ async def get_points_for_map():
 async def get_incident_points():
     start = time.time()
     points = await get_points_for_map()
-    logging.info(f'get_points_for_map took {time.time() - start}s')
+    logging.info(f'get_points_for_map took {time_elapsed(start)}')
     resp_body = {'points': points}
     return JSONResponse(content=resp_body)
