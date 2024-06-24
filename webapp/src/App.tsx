@@ -48,10 +48,16 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleNeighborhoodClick = (neighborhood: RawNeighborhoodProps) => {
-    setSelectedNeighborhood({
-      name: neighborhood.nhood,
-    });
+  const handleNeighborhoodClick = (
+    neighborhood: RawNeighborhoodProps | null
+  ) => {
+    if (neighborhood == null) {
+      setSelectedNeighborhood(null);
+    } else {
+      setSelectedNeighborhood({
+        name: neighborhood.nhood,
+      });
+    }
     setNeighborhoodData(null);
   };
 

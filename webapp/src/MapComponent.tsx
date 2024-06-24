@@ -43,7 +43,7 @@ const HeatmapLayer: React.FC<{
 };
 
 const MapComponent: React.FC<{
-  onNeighborhoodClick: (neighborhood: RawNeighborhoodProps) => void;
+  onNeighborhoodClick: (neighborhood: RawNeighborhoodProps | null) => void;
   onIncidentFilterChange: (incidentFilters: IncidentFilterProps) => void;
 }> = ({ onNeighborhoodClick, onIncidentFilterChange }) => {
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
@@ -101,6 +101,9 @@ const MapComponent: React.FC<{
         click: () => {
           console.log(properties);
           onNeighborhoodClick(properties);
+        },
+        popupclose: () => {
+          onNeighborhoodClick(null);
         },
       });
     }
