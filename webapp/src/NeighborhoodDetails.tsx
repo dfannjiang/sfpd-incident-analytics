@@ -174,7 +174,7 @@ const NeighborhoodDetails: React.FC<{
       case "3MONTH":
         return "Daily incidents: past 3 months";
       case "1MONTH":
-        return "Daily incidents: past months";
+        return "Daily incidents: past month";
       case "1WEEK":
         return "Daily incidents: past week";
       default:

@@ -5,7 +5,7 @@ const TimePeriodFilter: React.FC<{
 }> = ({ onTimePeriodChange }) => {
   return (
     <div>
-      <p className="time-period-title">Time Period</p>
+      <p className="time-period-title">Show data for past:</p>
       <Form className="time-period-form" onChange={onTimePeriodChange}>
         <Form.Group key="inline-radio">
           <Form.Check
