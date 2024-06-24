@@ -70,5 +70,8 @@ def not_tz_aware(dt):
 def is_daylight(dt):
     if not_tz_aware(dt):
       dt = localize_to_sf(dt)
-    s = sun(sf_city.observer, date=dt.date(), tzinfo=sf_local_tz)
-    return s['sunrise'] <= dt <= s['sunset']
+    
+    # Convert to sf timezone before checking is_daylight
+    converted_dt = dt.astimezone(sf_local_tz)
+    s = sun(sf_city.observer, date=converted_dt.date(), tzinfo=sf_local_tz)
+    return s['sunrise'] <= converted_dt <= s['sunset']

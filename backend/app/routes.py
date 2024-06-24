@@ -75,6 +75,8 @@ async def get_neighborhood(
             "counts_by_hour": [],
             "median_per_day": 0
         }
+    
+    # Converting because Tortoise ORM always returns datetime in UTC
     df['incident_datetime_local'] = df.incident_datetime.dt.tz_convert(sf_local_tz)
     df['incident_date_local'] = df.incident_datetime_local.dt.date
 
