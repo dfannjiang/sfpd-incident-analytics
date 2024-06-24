@@ -118,23 +118,21 @@ const MapComponent: React.FC<{
     const pts = fullHeatmapData.filter((pt) => filterFn(pt));
     let intensity = 1;
     if (pts.length < 100) {
-      intensity = 50;
-    } else if (pts.length < 500) {
-      intensity = 30;
-    } else if (pts.length < 1000) {
       intensity = 20;
+    } else if (pts.length < 500) {
+      intensity = 13;
+    } else if (pts.length < 1000) {
+      intensity = 8;
     } else if (pts.length < 2000) {
-      intensity = 10;
-    } else if (pts.length < 5000) {
       intensity = 5;
+    } else if (pts.length < 5000) {
+      intensity = 3;
     } else if (pts.length < 10000) {
-      intensity = 2;
+      intensity = 1.8;
     } else if (pts.length < 30000) {
       intensity = 1;
-    } else if (pts.length < 50000) {
-      intensity = 0.5;
     } else {
-      intensity = 0.2;
+      intensity = 0.5;
     }
     setHeatmapData(pts.map((pt) => [pt[0], pt[1], intensity]));
   }, [incidentFilters, fullHeatmapData]);
