@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { apiUrl } from "./config.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import ScrollDownContainer from "./ScrollDownContainer";
 
 interface IncidentCategoryFilterProps {
   onOptionSelect: (categories: string[]) => void;
@@ -77,9 +78,21 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
     setShowFilterOptions((prevShowFilterOptions) => !prevShowFilterOptions);
   };
 
+  const handleRemoveAllOptions = () => {
+    setSelectedOptions([]);
+  };
+
   return (
     <div className="filter-container">
-      <div className="selected-options-container">
+      {selectedOptions.length > 0 && (
+        <span
+          className="remove-all-options"
+          onClick={() => handleRemoveAllOptions()}
+        >
+          Deselect all &times;
+        </span>
+      )}
+      <ScrollDownContainer>
         {selectedOptions.map((option) => (
           <div className="selected-option" key={option}>
             {option}
@@ -91,7 +104,7 @@ const IncidentCategoryFilter: React.FC<IncidentCategoryFilterProps> = ({
             </span>
           </div>
         ))}
-      </div>
+      </ScrollDownContainer>
       <div className="input-container">
         <input
           type="text"

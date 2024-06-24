@@ -142,17 +142,27 @@ body,
   margin: 5px auto;
 }
 
-.filter-overlay .selected-options-container {
+.selected-options-container {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 5px;
   margin: 5px;
+  max-height: 20vh;
+  overflow-y: scroll;
 }
 
 .filter-overlay .input-container {
   width: 100%;
   display: flex;
+}
+
+.remove-all-options {
+  padding: 5px;
+  margin: 1px;
+  font-size: 10px;
+  cursor: pointer;
+  align-self: flex-start;
 }
 
 .selected-option {
