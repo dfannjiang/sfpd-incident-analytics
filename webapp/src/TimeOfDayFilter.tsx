@@ -29,7 +29,6 @@ const TimeOfDayFilter: React.FC<{
   };
 
   const handleNighttimeChange = () => {
-    console.log("nighttime!!");
     if (!daylight && nighttime) {
       // In this case, we're flipping the switches so that
       // we're only filtering on daylight
