@@ -9,10 +9,15 @@ from typing import List, Optional
 from urllib.parse import unquote
 from .utils import sf_local_tz
 
+######
+# NOTE: Tortoise ORM converts and returns datetime values to UTC
+######
+
 router = APIRouter()
 
 @router.get('/data-last-updated')
 async def get_data_last_updated():
+    # Returns the last updated datetime in UTC
     max_end_dt = await DataLoadLog.filter(failed=False).annotate(max_value=Max('end_dt')).values("max_value")
     last_updated = max_end_dt[0]['max_value'] if max_end_dt else None
     if last_updated:

@@ -63,13 +63,7 @@ const App: React.FC = () => {
       console.log(apiResp);
       const lastUpdated = keysToCamelCase(apiResp) as LastUpdatedResp;
 
-      // If date is in the future according to local time zone,
-      // assume its in UTC.
-      if (new Date(lastUpdated.lastUpdated) > new Date()) {
-        setLastUpdated(new Date(lastUpdated.lastUpdated + "Z"));
-      } else {
-        setLastUpdated(new Date(lastUpdated.lastUpdated));
-      }
+      setLastUpdated(new Date(lastUpdated.lastUpdated + "Z"));
     })();
   }, []);
 

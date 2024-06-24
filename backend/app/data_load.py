@@ -7,7 +7,7 @@ import traceback
 
 from config import DB_URL, SOCRATA_APP_TOKEN
 from models import DataLoadLog, IncidentReport
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from sodapy import Socrata
 from tortoise import Tortoise
@@ -35,6 +35,8 @@ async def insert_into_db(values, batch_num):
     logging.info(f'Batch: {batch_num}: attempting to insert {len(values)} rows')
     conn = await asyncpg.connect(DB_URL)
     async with conn.transaction():
+      # This way of copying records to the table assumes timezone-less
+      # datetimes as in the current local timezone
       await conn.copy_records_to_table('incidentreport', records=values)
     logging.info(f'Batch: {batch_num}: inserted {len(values)} rows')
     return len(values), 0
@@ -169,14 +171,13 @@ async def main():
         modules={'models': ['models', 'aerich.models']}
     )
     await Tortoise.generate_schemas()
-    start = datetime.now()
+    start = datetime.now(timezone.utc)
     try:
-      
       await data_update()
-      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(), failed=False)
+      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(timezone.utc), failed=False)
     except Exception as e:
       logging.error(f"Data load started at {str(start)} failed: {str(e)}")
-      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(), failed=True)
+      await DataLoadLog.create(start_dt=start, end_dt=datetime.now(timezone.utc), failed=True)
     finally:
       await Tortoise.close_connections()
 
