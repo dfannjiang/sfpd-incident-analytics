@@ -1,2 +1,2 @@
 #!/bin/sh
-git subtree push --prefix backend heroku-backend master
+git subtree push --prefix backend heroku master
