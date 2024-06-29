@@ -64,6 +64,7 @@ async def data_update():
   datetime_format = '%Y-%m-%dT%H:%M:%S.%f'
   today = datetime.today()
   cutoff_date = today - relativedelta(years=1)
+  cutoff_date = localize_to_sf(cutoff_date)
   cutoff_date_str = cutoff_date.strftime(datetime_format)
   existing_ids = await get_existing_ids()
 
