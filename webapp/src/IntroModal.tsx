@@ -25,10 +25,6 @@ const IntroModal: React.FC<{
           legal purposes.
         </p>
         <p>
-          The incident report data displayed in this app covers incidents from
-          the past year only.
-        </p>
-        <p>
           For more details and access to the source code, please visit{" "}
           <a
             href="https://github.com/dfannjiang/sf-city-analytics"
