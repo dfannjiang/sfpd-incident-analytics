@@ -30,7 +30,7 @@ const NeighborhoodDetails: React.FC<{
   const [incCatCounts, setIncCatCounts] = useState<BarChartData[]>([]);
   const [percentByHour, setPercentByHour] = useState<LineChartData[]>([]);
   const [countsByDay, setCountsByDay] = useState<LineChartData[]>([]);
-  const [medianPerDay, setMedianPerDay] = useState<number | null>(null);
+  const [avgPerDay, setAvgPerDay] = useState<number | null>(null);
 
   useEffect(() => {
     const sortedIncidentCounts = neighborhoodData.categoryCounts.sort(
@@ -81,7 +81,7 @@ const NeighborhoodDetails: React.FC<{
       });
     }
     setPercentByHour(percentByHour);
-    setMedianPerDay(neighborhoodData.medianPerDay);
+    setAvgPerDay(neighborhoodData.avgPerDay);
 
     const countsByDay: LineChartData[] = neighborhoodData.countsByDay.map(
       (incCount) => {
@@ -184,8 +184,8 @@ const NeighborhoodDetails: React.FC<{
 
   return (
     <div>
-      <h4>Median incidents per day: </h4>
-      <p>{medianPerDay}</p>
+      <h4>Avg incidents per day: </h4>
+      <p>{avgPerDay?.toFixed(1)}</p>
       <h4>Top 80% of incidents</h4>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart

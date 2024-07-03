@@ -93,7 +93,7 @@ async def get_neighborhood(
         return {
             "category_counts": [],
             "counts_by_hour": [],
-            "median_per_day": 0,
+            "avg_per_day": 0,
             "counts_by_day": []
         }
     
@@ -132,7 +132,7 @@ async def get_neighborhood(
             neighborhood_name, count in category_counts.items()
         ],
         "counts_by_hour": counts_by_hour_resp,
-        "median_per_day": int(df.groupby('incident_date_local').size().median()),
+        "avg_per_day": df.shape[0] / len(date_range),
         "counts_by_day": counts_by_day
     }
 

@@ -18,7 +18,7 @@ interface DayCount {
 export interface NeighborhoodDataResp {
   categoryCounts: IncidentCount[];
   countsByHour: number[];
-  medianPerDay: number;
+  avgPerDay: number;
   countsByDay: DayCount[];
 }
 

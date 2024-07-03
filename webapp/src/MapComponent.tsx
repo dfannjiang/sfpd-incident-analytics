@@ -30,7 +30,7 @@ const HeatmapLayer: React.FC<{
     let heatLayer: any;
     if (data.length > 0) {
       heatLayer = (L as any)
-        .heatLayer(data, { radius: 8, blur: 10 })
+        .heatLayer(data, { radius: 8, blur: 14 })
         .addTo(map);
     }
 
