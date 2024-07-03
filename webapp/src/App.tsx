@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
 import NeighborhoodDetails from "./NeighborhoodDetails";
-import { keysToCamelCase, formatIncidentFilterStr } from "./utils";
+import { keysToCamelCase, formatIncidentFilterStr } from "./utils.ts";
 import {
   RawNeighborhoodProps,
   NeighborhoodProps,
