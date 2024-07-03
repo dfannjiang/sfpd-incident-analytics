@@ -250,7 +250,7 @@ const NeighborhoodDetails: React.FC<{
                 districtPop[neighborhoodName]
               ).toLocaleString(undefined, { maximumFractionDigits: 1 })
             : 0}{" "}
-          per 10,000)
+          per 10,000 people)
         </p>
       </div>
       <h4>Top 80% of incidents</h4>
