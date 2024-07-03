@@ -22,10 +22,59 @@ interface LineChartData {
   value: number;
 }
 
+// 2020 estimate
+interface NeighborhoodPopulations {
+  [key: string]: number;
+}
+const districtPop: NeighborhoodPopulations = {
+  "Bayview Hunters Point": 38480.0,
+  "Bernal Heights": 26149.0,
+  "Castro/Upper Market": 23138.0,
+  Chinatown: 14310.0,
+  Excelsior: 40980.0,
+  "Financial District/South Beach": 22963.0,
+  "Glen Park": 8654.0,
+  "Golden Gate Park": 32.0,
+  "Haight Ashbury": 19181.0,
+  "Hayes Valley": 19818.0,
+  "Inner Richmond": 22753.0,
+  "Inner Sunset": 28551.0,
+  Japantown: 3624.0,
+  Lakeshore: 14368.0,
+  "Lincoln Park": 185.0,
+  "Lone Mountain/USF": 17350.0,
+  Marina: 25186.0,
+  "McLaren Park": 153.0,
+  Mission: 58424.0,
+  "Mission Bay": 13330.0,
+  "Nob Hill": 26247.0,
+  "Noe Valley": 22628.0,
+  "North Beach": 11934.0,
+  "Oceanview/Merced/Ingleside": 27335.0,
+  "Outer Mission": 24646.0,
+  "Outer Richmond": 45745.0,
+  "Pacific Heights": 23953.0,
+  Portola: 16243.0,
+  "Potrero Hill": 14845.0,
+  Presidio: 4073.0,
+  "Presidio Heights": 10445.0,
+  "Russian Hill": 18237.0,
+  Seacliff: 2416.0,
+  "South of Market": 25132.0,
+  "Sunset/Parkside": 81639.0,
+  Tenderloin: 29726.0,
+  "Treasure Island": 3184.0,
+  "Twin Peaks": 8068.0,
+  "Visitacion Valley": 19875.0,
+  "West of Twin Peaks": 38485.0,
+  "Western Addition": 22299.0,
+};
+
 const NeighborhoodDetails: React.FC<{
+  neighborhoodName: string;
   neighborhoodData: NeighborhoodDataResp;
   incidentFilters: IncidentFilterProps;
-}> = ({ neighborhoodData, incidentFilters }) => {
+}> = ({ neighborhoodName, neighborhoodData, incidentFilters }) => {
   const [topIncidents, setTopIncidents] = useState<string[]>([]);
   const [incCatCounts, setIncCatCounts] = useState<BarChartData[]>([]);
   const [percentByHour, setPercentByHour] = useState<LineChartData[]>([]);
@@ -184,8 +233,26 @@ const NeighborhoodDetails: React.FC<{
 
   return (
     <div>
-      <h4>Avg incidents per day: </h4>
-      <p>{avgPerDay?.toFixed(1)}</p>
+      <h4>Overview</h4>
+      <div>
+        <b className="overview-item">Population: </b>
+        <p className="overview-item">
+          {districtPop[neighborhoodName].toLocaleString()} (2020)
+        </p>
+      </div>
+      <div>
+        <b className="overview-item">Avg incidents per day: </b>
+        <p className="overview-item">
+          {avgPerDay?.toFixed(1)} (
+          {avgPerDay && avgPerDay > 0
+            ? (
+                (avgPerDay * 10000) /
+                districtPop[neighborhoodName]
+              ).toLocaleString(undefined, { maximumFractionDigits: 1 })
+            : 0}{" "}
+          per 10,000)
+        </p>
+      </div>
       <h4>Top 80% of incidents</h4>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart

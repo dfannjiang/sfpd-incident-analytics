@@ -149,6 +149,7 @@ const App: React.FC = () => {
             <div className="neighborhood-detail-container">
               <h2>{selectedNeighborhood.name} District</h2>
               <NeighborhoodDetails
+                neighborhoodName={selectedNeighborhood.name}
                 neighborhoodData={neighborhoodData}
                 incidentFilters={incidentFilters}
               />

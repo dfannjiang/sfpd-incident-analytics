@@ -72,6 +72,10 @@ body,
   color: #888;
 }
 
+.overview-item {
+  display: inline;
+}
+
 .custom-tooltip {
   background-color: #ffffff; /* White background */
   color: #000000; /* Black text */
