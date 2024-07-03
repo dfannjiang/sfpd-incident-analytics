@@ -16,7 +16,7 @@ There are 2 main data tranformations:
 
 ## Tech Stack
 **Frontend**: [React](https://react.dev/) app built with [Vite](https://vitejs.dev/). [Recharts](https://recharts.org/en-US/) for the bar charts and line graphs,
-and [Leaflet](https://leafletjs.com/) for mapping.
+and [Leaflet](https://leafletjs.com/) for mapping. Hosted on [Vercel](https://vercel.com/).
 
 **Backend**: Built on [FastAPI](https://fastapi.tiangolo.com/), with [PostgreSQL](https://www.postgresql.org/) DB to store data and
-[TortoiseORM](https://tortoise.github.io/) + [Aerich](https://github.com/tortoise/aerich) to interface with the DB and manage DB migrations.
+[TortoiseORM](https://tortoise.github.io/) + [Aerich](https://github.com/tortoise/aerich) to interface with the DB and manage DB migrations. Deployed on [Heroku](https://www.heroku.com/).
