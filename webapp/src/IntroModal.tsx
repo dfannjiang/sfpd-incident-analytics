@@ -9,9 +9,24 @@ const IntroModal: React.FC<{
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton className="bg-dark text-light">
-        <Modal.Title>Welcome to the SF Police Incident Reports App</Modal.Title>
+        <Modal.Title>SFPD Incident Analytics</Modal.Title>
       </Modal.Header>
       <Modal.Body className="bg-dark text-light">
+        <p>
+          Welcome to a live dashboard of SFPD incident analytics. Explore the
+          heatmap of incidents and click on the map to see incident analytics
+          for a specific neighborhood.
+        </p>
+        <p>
+          Data source:{" "}
+          <a
+            href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-2018-to-Present/wg3w-h783/about_data"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SFPD Incidents from DataSF
+          </a>
+        </p>
         <p>
           <strong>Important Notice:</strong>
         </p>
@@ -25,13 +40,13 @@ const IntroModal: React.FC<{
           legal purposes.
         </p>
         <p>
-          For more details and access to the source code, please visit{" "}
+          For more technical details, please visit{" "}
           <a
             href="https://github.com/dfannjiang/sf-city-analytics"
             target="_blank"
             rel="noopener noreferrer"
           >
-            GitHub page
+            GitHub repo
           </a>
           .
         </p>
