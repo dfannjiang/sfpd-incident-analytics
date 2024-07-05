@@ -136,7 +136,7 @@ async def get_neighborhood(
         "counts_by_day": counts_by_day
     }
 
-@cached(ttl=60*5, cache=SimpleMemoryCache)  
+@cached(ttl=60*60*2, cache=SimpleMemoryCache)  
 async def get_points_for_map():
     data = await IncidentReport.all().values('latitude', 'longitude',
                                              'user_friendly_category',
@@ -162,7 +162,7 @@ async def get_points_for_map():
 @router.get('/incident-points')
 async def get_incident_points():
     start = time.time()
-    points = await get_points_for_map()
+    points = await get_points_for_map(aiocache_wait_for_write=False)
     logging.info(f'get_points_for_map took {time_elapsed(start)}')
     resp_body = {'points': points}
     return JSONResponse(content=resp_body)
