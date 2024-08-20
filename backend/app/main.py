@@ -13,7 +13,6 @@ app = FastAPI()
 
 allowed_origins = os.environ.get("ALLOWED_ORIGINS", "")
 origins = allowed_origins.split(",") if allowed_origins else []
-origins.append("http://localhost:5173")
 
 # Allow CORS
 app.add_middleware(
