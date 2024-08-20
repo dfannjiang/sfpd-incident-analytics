@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 from .models import DataLoadLog, IncidentReport
 from fastapi import APIRouter, HTTPException, Path, Query
 from fastapi.responses import JSONResponse
-from tortoise.functions import Max
+from tortoise.functions import Max, Count
 from typing import List, Optional, Tuple
 from urllib.parse import unquote
 from .utils import sf_local_tz
@@ -62,8 +62,11 @@ async def get_data_last_updated():
 
 @router.get('/incident-categories')
 async def get_incident_categories():
-    categories = await IncidentReport.all().distinct().values_list('user_friendly_category', flat=True)
-    return { 'categories': [cat for cat in categories if bool(cat)] }
+    categories = await IncidentReport.annotate(count_incidents=Count('id'))\
+                         .group_by('user_friendly_category')\
+                         .order_by('-count_incidents')\
+                         .values('user_friendly_category')
+    return { 'categories': [cat.get('user_friendly_category') for cat in categories if bool(cat)] }
 
 @router.get('/neighborhoods/{name:path}')
 async def get_neighborhood(
