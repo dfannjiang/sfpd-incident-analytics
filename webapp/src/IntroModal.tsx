@@ -14,8 +14,8 @@ const IntroModal: React.FC<{
       <Modal.Body className="bg-dark text-light">
         <p>
           Welcome to a live dashboard of SFPD incident analytics. Explore the
-          heatmap of incidents and click on the map to see incident analytics
-          for a specific neighborhood.
+          density map of incidents and click on the map to see incident
+          analytics for a specific neighborhood.
         </p>
         <p>
           Data source:{" "}
@@ -36,7 +36,7 @@ const IntroModal: React.FC<{
           >
             GitHub repo
           </a>{" "}
-          for more technical details.
+          for more details about this project.
         </p>
         <p>
           <strong>Important Notice:</strong>
