@@ -11,7 +11,8 @@ inject();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    <div>Under maintenance</div>
     <SpeedInsights />
   </React.StrictMode>
 );
